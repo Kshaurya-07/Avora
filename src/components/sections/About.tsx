@@ -7,11 +7,11 @@ interface AboutProps {
 }
 
 export const About: React.FC<AboutProps> = ({ onNavigate }) => {
-  const stats = [
-    { value: '20+', label: 'Curated Projects', sub: 'Across visual & digital mediums' },
-    { value: '10+', label: 'Design Categories', sub: 'From branding to 3D web' },
-    { value: '∞', label: 'Ideas & Concepts', sub: 'Driven by continuous discovery' },
-    { value: '5+', label: 'Collaborations', sub: 'Visionary founders & studios' },
+  const studioPillars = [
+    { title: 'Multidisciplinary', subtitle: 'Core Discipline', detail: 'Branding, graphics, streetwear apparel, UI/UX and fullstack web experiences.' },
+    { title: 'Design-First', subtitle: 'Creative Direction', detail: 'Rigorous typography, grid architecture, and physical tactile materiality.' },
+    { title: 'Engineering', subtitle: 'Living Digital Code', detail: 'Production React, Next.js, and Three.js WebGL with 60 FPS performance.' },
+    { title: 'Direct Atelier', subtitle: 'Studio Partnership', detail: 'Unfiltered creative collaboration directly with the designer and developer.' },
   ];
 
   const handleDownloadCV = () => {
@@ -91,25 +91,27 @@ Available for select commissions, brand identity systems, and digital flagships.
           </div>
         </div>
 
-        {/* Animated Statistics Metric Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-16 border-b border-avora-border">
-          {stats.map((stat, idx) => (
+        {/* Studio Pillars & Architectural Core */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-16 border-b border-avora-border">
+          {studioPillars.map((pillar, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="space-y-1"
+              className="p-6 rounded-2xl bg-white/70 border border-avora-border shadow-xs space-y-2 flex flex-col justify-between"
             >
-              <p className="font-serif text-4xl sm:text-6xl font-bold text-avora-charcoal">
-                {stat.value}
-              </p>
-              <p className="font-sans text-sm font-semibold text-avora-charcoal pt-1">
-                {stat.label}
-              </p>
-              <p className="text-xs font-mono text-avora-muted">
-                {stat.sub}
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-avora-muted block mb-1">
+                  0{idx + 1} // {pillar.subtitle}
+                </span>
+                <h4 className="font-serif text-2xl font-bold text-avora-charcoal">
+                  {pillar.title}
+                </h4>
+              </div>
+              <p className="text-xs font-sans text-avora-muted leading-relaxed pt-2">
+                {pillar.detail}
               </p>
             </motion.div>
           ))}

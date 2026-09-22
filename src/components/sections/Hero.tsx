@@ -69,22 +69,35 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.45, ease: 'easeOut' }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
           >
-            <button
-              onClick={() => onNavigate('work')}
-              className="px-6 py-3.5 rounded-full bg-avora-charcoal text-white text-sm font-sans font-semibold tracking-wide hover:bg-black transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 group"
-            >
-              <span>View My Work</span>
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => onNavigate('planner')}
+                className="px-7 py-4 rounded-full bg-avora-charcoal text-white text-xs sm:text-sm font-sans font-semibold tracking-wide hover:bg-black transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 group"
+              >
+                <span>Start a Project</span>
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </button>
 
+              <button
+                onClick={() => onNavigate('consultation')}
+                className="px-7 py-4 rounded-full bg-white/80 hover:bg-white text-avora-charcoal text-xs sm:text-sm font-sans font-medium tracking-wide border border-avora-border transition-all duration-300 shadow-xs hover:shadow-md flex items-center gap-2 group backdrop-blur-md"
+              >
+                <span>Book a Consultation</span>
+                <ArrowUpRight className="w-4 h-4 text-avora-muted group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </button>
+            </div>
+
+            {/* Subtle "Not sure what you need? → Let's talk" Prompt */}
             <button
-              onClick={() => onNavigate('planner')}
-              className="px-6 py-3.5 rounded-full bg-white/80 hover:bg-white text-avora-charcoal text-sm font-sans font-medium tracking-wide border border-avora-border transition-all duration-300 shadow-xs hover:shadow-md flex items-center gap-2 group backdrop-blur-md"
+              onClick={() => onNavigate('consultation')}
+              className="text-xs font-mono text-avora-muted hover:text-avora-charcoal transition-colors flex items-center gap-1.5 pt-1 sm:pt-0 sm:pl-2"
             >
-              <span>Start a Project</span>
-              <ArrowUpRight className="w-4 h-4 text-avora-muted group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <span>Not sure what you need?</span>
+              <span className="font-semibold underline decoration-avora-border hover:decoration-black">
+                → Let's talk
+              </span>
             </button>
           </motion.div>
         </div>

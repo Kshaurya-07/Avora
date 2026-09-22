@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 
 export interface CursorContextType {
   cursorText: string;
-  cursorVariant: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer';
-  setCursor: (text: string, variant?: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer') => void;
+  cursorVariant: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer' | 'discuss';
+  setCursor: (text: string, variant?: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer' | 'discuss') => void;
   resetCursor: () => void;
 }
 

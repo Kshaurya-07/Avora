@@ -12,6 +12,7 @@ import { Playground } from './components/sections/Playground';
 import { Toolkit } from './components/sections/Toolkit';
 import { About } from './components/sections/About';
 import { Testimonials } from './components/sections/Testimonials';
+import { Consultation } from './components/sections/Consultation';
 import { Packages } from './components/sections/Packages';
 import { ProjectPlanner } from './components/sections/ProjectPlanner';
 import { FinalCTA } from './components/sections/FinalCTA';
@@ -25,9 +26,14 @@ export const App: React.FC = () => {
   
   // Cursor context state
   const [cursorText, setCursorText] = useState('');
-  const [cursorVariant, setCursorVariant] = useState<'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer'>('default');
+  const [cursorVariant, setCursorVariant] = useState<
+    'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer' | 'discuss'
+  >('default');
 
-  const setCursor = (text: string, variant: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer' = 'default') => {
+  const setCursor = (
+    text: string,
+    variant: 'default' | 'project' | 'explore' | 'drag' | 'play' | 'pointer' | 'discuss' = 'default'
+  ) => {
     setCursorText(text);
     setCursorVariant(variant);
   };
@@ -67,7 +73,16 @@ export const App: React.FC = () => {
 
   // Intersection Observer for Active Section Highlight
   useEffect(() => {
-    const sections = ['hero', 'services', 'work', 'about', 'playground', 'packages', 'planner'];
+    const sections = [
+      'hero',
+      'services',
+      'work',
+      'about',
+      'playground',
+      'consultation',
+      'packages',
+      'planner',
+    ];
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -94,7 +109,9 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleFilterWorkFromService = (filter: 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB') => {
+  const handleFilterWorkFromService = (
+    filter: 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB'
+  ) => {
     setActiveWorkFilter(filter);
     handleNavigate('work');
   };
@@ -132,12 +149,14 @@ export const App: React.FC = () => {
           <SelectedWork
             activeFilter={activeWorkFilter}
             onFilterChange={setActiveWorkFilter}
+            onNavigate={handleNavigate}
           />
           <DesignedThenBuilt />
           <Playground />
           <Toolkit />
           <About onNavigate={handleNavigate} />
           <Testimonials />
+          <Consultation />
           <Packages onSelectPackage={handleSelectPackage} />
           <ProjectPlanner initialService={plannerService} />
           <FinalCTA onNavigate={handleNavigate} />

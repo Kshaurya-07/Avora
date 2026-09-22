@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, FolderGit2, Sparkles, User, Lightbulb, Mail, ArrowUpRight, X } from 'lucide-react';
+import { Search, FolderGit2, Sparkles, User, Lightbulb, Mail, ArrowUpRight, X, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CommandItem {
@@ -47,6 +47,13 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ isOpen, onClose, onNav
       category: 'Navigation',
       icon: <Lightbulb className="w-4 h-4 text-emerald-500" />,
       action: () => { onNavigate('playground'); onClose(); }
+    },
+    {
+      id: 'consultation',
+      label: 'Book a Consultation (Idea Discussion)',
+      category: 'Actions',
+      icon: <Compass className="w-4 h-4 text-purple-500" />,
+      action: () => { onNavigate('consultation'); onClose(); }
     },
     {
       id: 'planner',

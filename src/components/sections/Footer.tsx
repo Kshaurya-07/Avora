@@ -16,6 +16,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
     { label: 'Services', id: 'services' },
     { label: 'About', id: 'about' },
     { label: 'Playground', id: 'playground' },
+    { label: 'Consultation', id: 'consultation' },
     { label: 'Packages', id: 'packages' },
     { label: 'Contact', id: 'planner' },
   ];

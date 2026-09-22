@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommand, activeSection, on
     { label: 'Services', id: 'services' },
     { label: 'About', id: 'about' },
     { label: 'Playground', id: 'playground' },
-    { label: 'Packages', id: 'packages' },
+    { label: 'Consultation', id: 'consultation' },
     { label: 'Contact', id: 'planner' },
   ];
 
@@ -101,12 +101,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommand, activeSection, on
               <span>Available for freelance</span>
             </div>
 
-            {/* Let's Work Magnetic CTA */}
+            {/* Book a Consultation Primary CTA */}
             <button
-              onClick={() => handleLinkClick('planner')}
+              onClick={() => handleLinkClick('consultation')}
               className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-avora-charcoal text-white text-xs font-sans font-semibold tracking-wide hover:bg-black transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>Let's Work</span>
+              <span>Book a Consultation</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
 
@@ -151,18 +151,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommand, activeSection, on
               </div>
             </div>
 
-            <div className="pt-8 border-t border-avora-border space-y-4">
+            <div className="pt-8 border-t border-avora-border space-y-3">
               <div className="flex items-center gap-2 text-xs font-mono text-avora-charcoal">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Available for freelance worldwide</span>
               </div>
-              <button
-                onClick={() => handleLinkClick('planner')}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-avora-charcoal text-white font-sans text-sm font-semibold tracking-wide"
-              >
-                <span>Start a Project</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleLinkClick('consultation')}
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-white border border-avora-border text-avora-charcoal font-sans text-xs font-semibold"
+                >
+                  <span>Consultation</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => handleLinkClick('planner')}
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-avora-charcoal text-white font-sans text-xs font-semibold"
+                >
+                  <span>Start Project</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

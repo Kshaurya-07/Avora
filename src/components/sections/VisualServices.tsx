@@ -44,7 +44,7 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
             <span className="text-xs font-mono uppercase tracking-[0.25em] text-avora-muted block mb-3">
-              Interactive Discipline Showcase
+              Capability Demonstrations // What AVORA Can Create
             </span>
             <h2 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-avora-charcoal leading-none">
               WHAT I DO.
@@ -52,7 +52,7 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) 
           </div>
           <div className="max-w-md text-sm sm:text-base font-sans text-avora-muted">
             <p className="font-medium text-avora-charcoal">Design, develop and everything in between.</p>
-            <p className="mt-1">Creative solutions built for a modern world. Select a discipline below to transform the visual studio stage.</p>
+            <p className="mt-1">Interactive demonstrations showing how AVORA approaches form, systems, garments, and functional code. Select a discipline below to transform the studio stage.</p>
           </div>
         </div>
 
