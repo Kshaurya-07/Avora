@@ -3,16 +3,16 @@ import { ArrowUp, ArrowUpRight } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
+  onNavigateAbout?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateAbout }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navLinks = [
     { label: 'Home', id: 'hero' },
-    { label: 'Work', id: 'work' },
     { label: 'Services', id: 'services' },
     { label: 'About', id: 'about' },
     { label: 'Playground', id: 'playground' },
@@ -29,6 +29,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
     { label: 'GitHub', url: 'https://github.com/Kshaurya-07/Avora' },
   ];
 
+  const handleLinkClick = (id: string) => {
+    if (id === 'about') {
+      if (onNavigateAbout) onNavigateAbout();
+      else onNavigate('about');
+    } else {
+      onNavigate(id);
+    }
+  };
+
   return (
     <footer className="relative w-full bg-[#FAF9F6] border-t border-avora-border pt-20 pb-12 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
@@ -39,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               AVORA
             </h2>
             <p className="text-sm sm:text-base font-sans text-avora-muted">
-              Designing a better digital world.
+              Designing ideas into living digital experiences.
             </p>
           </div>
 
@@ -63,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               {navLinks.map((item) => (
                 <li key={item.id}>
                   <button
-                    onClick={() => onNavigate(item.id)}
+                    onClick={() => handleLinkClick(item.id)}
                     className="hover:text-black transition-colors"
                   >
                     {item.label}
@@ -73,16 +82,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Creative Disciplines */}
+          {/* Creative Disciplines (All 7 in order) */}
           <div className="space-y-3">
             <p className="font-bold text-avora-charcoal uppercase tracking-wider">Disciplines</p>
             <ul className="space-y-2 text-avora-muted">
-              <li>Branding & Systems</li>
-              <li>Graphic & Posters</li>
-              <li>Apparel & Streetwear</li>
-              <li>Digital Product UI/UX</li>
-              <li>Editorial Web Design</li>
-              <li>Frontend & WebGL</li>
+              <li>01 Logo Design</li>
+              <li>02 Brand Identity</li>
+              <li>03 Graphic & Editorial</li>
+              <li>04 Apparel & Capsule</li>
+              <li>05 UI/UX & Systems</li>
+              <li>06 Immersive Web Design</li>
+              <li>07 Frontend & WebGL</li>
             </ul>
           </div>
 
@@ -108,19 +118,25 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
           {/* Direct Coordinate */}
           <div className="space-y-3 col-span-2 sm:col-span-1">
-            <p className="font-bold text-avora-charcoal uppercase tracking-wider">Location</p>
+            <p className="font-bold text-avora-charcoal uppercase tracking-wider">Direct Atelier</p>
             <p className="text-avora-muted leading-relaxed">
               Operating globally across digital space. Remote-first studio atelier.
             </p>
             <p className="text-avora-muted pt-2">
-              Inquiries: <span className="text-avora-charcoal font-semibold">contact@avora-studio.com</span>
+              Inquiries:{' '}
+              <a
+                href="mailto:kshaurya0708@gmail.com"
+                className="text-avora-charcoal font-semibold underline hover:text-purple-600 transition-colors"
+              >
+                kshaurya0708@gmail.com
+              </a>
             </p>
           </div>
         </div>
 
         {/* Bottom Tier: Copyright & Legal */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-avora-muted">
-          <p>© {new Date().getFullYear()} AVORA — All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} AVORA — Kumar Shaurya. All Rights Reserved.</p>
           <p className="tracking-wider">DESIGNING IDEAS INTO EXPERIENCES.</p>
         </div>
       </div>

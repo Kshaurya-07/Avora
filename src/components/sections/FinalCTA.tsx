@@ -63,10 +63,10 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onNavigate }) => {
           </button>
 
           <a
-            href="mailto:contact@avora-studio.com"
+            href="mailto:kshaurya0708@gmail.com"
             className="px-8 py-4 rounded-full bg-white hover:bg-[#FAF9F6] text-avora-charcoal text-sm font-sans font-medium tracking-wide border border-avora-border transition-all shadow-xs hover:shadow-md flex items-center gap-2"
           >
-            <Mail className="w-4 h-4 text-avora-muted" />
+            <Mail className="w-4 h-4 text-purple-600" />
             <span>Direct Email</span>
           </a>
         </motion.div>

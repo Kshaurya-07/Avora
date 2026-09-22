@@ -14,19 +14,18 @@ interface CommandMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (sectionId: string) => void;
+  onNavigateAbout?: () => void;
 }
 
-export const CommandMenu: React.FC<CommandMenuProps> = ({ isOpen, onClose, onNavigate }) => {
+export const CommandMenu: React.FC<CommandMenuProps> = ({
+  isOpen,
+  onClose,
+  onNavigate,
+  onNavigateAbout,
+}) => {
   const [query, setQuery] = useState('');
 
   const commands: CommandItem[] = [
-    {
-      id: 'work',
-      label: 'Selected Work & Case Studies',
-      category: 'Navigation',
-      icon: <FolderGit2 className="w-4 h-4 text-avora-lavender" />,
-      action: () => { onNavigate('work'); onClose(); }
-    },
     {
       id: 'services',
       label: 'Visual Discipline Experiences',
@@ -36,10 +35,14 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ isOpen, onClose, onNav
     },
     {
       id: 'about',
-      label: 'About AVORA & Philosophy',
+      label: 'About AVORA & Founder (Kumar Shaurya)',
       category: 'Navigation',
       icon: <User className="w-4 h-4 text-avora-pink" />,
-      action: () => { onNavigate('about'); onClose(); }
+      action: () => {
+        if (onNavigateAbout) onNavigateAbout();
+        else onNavigate('about');
+        onClose();
+      }
     },
     {
       id: 'playground',
@@ -50,7 +53,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ isOpen, onClose, onNav
     },
     {
       id: 'consultation',
-      label: 'Book a Consultation (Idea Discussion)',
+      label: 'Book a Consultation (7 Tailored Forms)',
       category: 'Actions',
       icon: <Compass className="w-4 h-4 text-purple-500" />,
       action: () => { onNavigate('consultation'); onClose(); }
@@ -61,6 +64,16 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({ isOpen, onClose, onNav
       category: 'Actions',
       icon: <Mail className="w-4 h-4 text-amber-500" />,
       action: () => { onNavigate('planner'); onClose(); }
+    },
+    {
+      id: 'email',
+      label: 'Direct Email (kshaurya0708@gmail.com)',
+      category: 'Contact',
+      icon: <Mail className="w-4 h-4 text-purple-600" />,
+      action: () => {
+        window.location.href = 'mailto:kshaurya0708@gmail.com';
+        onClose();
+      }
     },
   ];
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, Sparkles } from 'lucide-react';
 import { SERVICES } from '../../data/services';
+import { LogoDesignMockup } from '../mockups/LogoDesignMockup';
 import { BrandingMockup } from '../mockups/BrandingMockup';
 import { GraphicDesignMockup } from '../mockups/GraphicDesignMockup';
 import { ApparelMockup } from '../mockups/ApparelMockup';
@@ -10,16 +11,29 @@ import { WebDesignMockup } from '../mockups/WebDesignMockup';
 import { WebDevMockup } from '../mockups/WebDevMockup';
 
 interface VisualServicesProps {
-  onFilterWork: (filter: 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB') => void;
+  onSelectConsultation?: (serviceId: string) => void;
 }
 
-export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) => {
-  const [selectedServiceId, setSelectedServiceId] = useState<string>('branding');
+export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsultation }) => {
+  const [selectedServiceId, setSelectedServiceId] = useState<string>('logo-design');
 
   const currentService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
 
+  const handleStartConsultation = (serviceId: string) => {
+    if (onSelectConsultation) {
+      onSelectConsultation(serviceId);
+    } else {
+      const el = document.getElementById('consultation');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   const renderVisualStage = () => {
     switch (selectedServiceId) {
+      case 'logo-design':
+        return <LogoDesignMockup />;
       case 'branding':
         return <BrandingMockup />;
       case 'graphic-design':
@@ -33,7 +47,7 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) 
       case 'web-development':
         return <WebDevMockup />;
       default:
-        return <BrandingMockup />;
+        return <LogoDesignMockup />;
     }
   };
 
@@ -52,13 +66,15 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) 
           </div>
           <div className="max-w-md text-sm sm:text-base font-sans text-avora-muted">
             <p className="font-medium text-avora-charcoal">Design, develop and everything in between.</p>
-            <p className="mt-1">Interactive demonstrations showing how AVORA approaches form, systems, garments, and functional code. Select a discipline below to transform the studio stage.</p>
+            <p className="mt-1">
+              Interactive demonstrations showing how AVORA approaches form, systems, garments, and functional code. Select a discipline below to transform the studio stage.
+            </p>
           </div>
         </div>
 
         {/* 2-Column Split: Discipline Selector (Left) & Dynamic Visual Stage (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left Column: 6 Disciplines Interactive List */}
+          {/* Left Column: 7 Disciplines Interactive List */}
           <div className="lg:col-span-5 flex flex-col space-y-2">
             {SERVICES.map((service) => {
               const isSelected = selectedServiceId === service.id;
@@ -115,12 +131,12 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onFilterWork }) 
                         ))}
                       </div>
 
-                      {/* CTA to Filter Portfolio */}
+                      {/* CTA to Personalized Consultation */}
                       <div className="pt-2">
                         <span
                           onClick={(e) => {
                             e.stopPropagation();
-                            onFilterWork(service.filterKey);
+                            handleStartConsultation(service.id);
                           }}
                           className="inline-flex items-center gap-1.5 text-xs font-sans font-semibold text-avora-charcoal hover:text-avora-lavender transition-colors cursor-pointer"
                         >

@@ -4,10 +4,10 @@ import { PenTool, Code, Sparkles, Layout, Palette, Terminal } from 'lucide-react
 
 export const Toolkit: React.FC = () => {
   const designTools = [
-    { name: 'Figma', category: 'UI Systems & Vector Craft', detail: 'Components, Auto-layout, Tokens' },
-    { name: 'Adobe Photoshop', category: 'Raster Art Direction', detail: 'Textures, Compositing, Retouching' },
-    { name: 'Adobe Illustrator', category: 'Vector & Identity', detail: 'Precision Bezier Grids & Marks' },
-    { name: 'Canva', category: 'Rapid Social Prototyping', detail: 'Agile Marketing Visuals' },
+    { name: 'Canva', category: 'Graphic Design & Agile Socials', detail: 'Fast Marketing Visuals, Pitch Decks & Social Assets' },
+    { name: 'Adobe Illustrator', category: 'Precision Vector & Identity', detail: 'Mathematical Logo Grids, Monograms & Tech Packs' },
+    { name: 'Figma', category: 'UI/UX & Design Systems', detail: 'Multi-State Components, Tokens & Responsive Layouts' },
+    { name: 'Adobe Photoshop', category: 'Editorial Compositing & Texture', detail: 'High-Fashion Retouching, Grain & Posters' },
   ];
 
   const devTools = [

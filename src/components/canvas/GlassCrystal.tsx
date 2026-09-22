@@ -55,17 +55,16 @@ export const GlassCrystal: React.FC = () => {
           <octahedronGeometry args={[1.4, 1]} />
           <MeshTransmissionMaterial
             backside={true}
-            samples={12}
-            resolution={512}
+            samples={5}
+            resolution={256}
             transmission={0.96}
             roughness={0.08}
-            thickness={1.4}
+            thickness={1.3}
             ior={1.52}
-            chromaticAberration={0.08}
-            anisotropy={0.3}
-            distortion={0.3}
-            distortionScale={0.4}
-            temporalDistortion={0.1}
+            chromaticAberration={0.06}
+            anisotropy={0.2}
+            distortion={0.25}
+            distortionScale={0.3}
             attenuationDistance={1.2}
             attenuationColor="#E9D5FF"
             color="#FFFFFF"

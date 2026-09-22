@@ -18,6 +18,7 @@ export const ProjectPlanner: React.FC<ProjectPlannerProps> = ({ initialService }
   const [errorMsg, setErrorMsg] = useState('');
 
   const availableServices = [
+    'Logo Design',
     'Branding & Identity',
     'Graphic Design',
     'Apparel & Streetwear',

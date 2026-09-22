@@ -1,4 +1,5 @@
 export type Discipline = 
+  | 'LOGO DESIGN'
   | 'BRANDING' 
   | 'GRAPHIC DESIGN' 
   | 'APPAREL' 
@@ -48,7 +49,7 @@ export interface ServiceDetail {
   visualSequence: string[];
   accentColor: string;
   ctaText: string;
-  filterKey: 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB';
+  filterKey?: 'LOGO' | 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB';
 }
 
 export interface PlaygroundItem {

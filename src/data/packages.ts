@@ -21,25 +21,25 @@ export const SERVICE_PACKAGES: PackagePlan[] = [
   {
     id: 'digital-presence',
     title: 'DIGITAL PRESENCE',
-    subtitle: 'Modern Product & Web Design',
-    tag: 'UI/UX & Web Showcase',
-    timeline: '3–4 Weeks',
+    subtitle: 'UI/UX, Web Design & Modern Online Experience',
+    tag: 'Most Popular',
+    timeline: '3–5 Weeks',
     deliverables: [
-      'User Flows & Wireframe Architecture',
-      'High-Fidelity Figma UI Prototypes',
-      'Desktop, Tablet & Mobile Breakpoints',
-      'Component Library & Design Tokens',
-      'Interactive Micro-Animations Spec',
-      'Developer-Ready Handoff Asset Kit'
+      'Digital Brand Identity & Visual Language',
+      'User Flow & Wireframe Architecture',
+      'High-Fidelity UI/UX Design System in Figma',
+      'Responsive Breakpoints (Desktop, Tablet, Mobile)',
+      'Modern Website Design & Interactive Prototyping',
+      'Clean Web Development Implementation Spec / Code Handoff'
     ],
-    idealFor: 'Companies with existing branding needing a world-class, conversion-engineered digital interface.',
-    featured: false
+    idealFor: 'Brands & founders wanting a modern, high-converting digital identity and seamless responsive website.',
+    featured: true
   },
   {
     id: 'web-experience',
     title: 'WEB EXPERIENCE',
     subtitle: 'Design + Frontend Development',
-    tag: 'Most Popular',
+    tag: 'Bespoke Experience',
     timeline: '4–6 Weeks',
     deliverables: [
       'Custom Creative Web Art Direction',
@@ -50,7 +50,7 @@ export const SERVICE_PACKAGES: PackagePlan[] = [
       'SEO & Lighthouse 95+ Performance Audit'
     ],
     idealFor: 'Forward-thinking brands wanting an Awwwards-caliber digital flagship that turns visitors into advocates.',
-    featured: true
+    featured: false
   },
   {
     id: 'complete-brand',

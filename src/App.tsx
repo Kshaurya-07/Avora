@@ -6,7 +6,6 @@ import { CommandMenu } from './components/navigation/CommandMenu';
 import { Hero } from './components/sections/Hero';
 import { TickerIntro } from './components/sections/TickerIntro';
 import { VisualServices } from './components/sections/VisualServices';
-import { SelectedWork } from './components/sections/SelectedWork';
 import { DesignedThenBuilt } from './components/sections/DesignedThenBuilt';
 import { Playground } from './components/sections/Playground';
 import { Toolkit } from './components/sections/Toolkit';
@@ -17,12 +16,16 @@ import { Packages } from './components/sections/Packages';
 import { ProjectPlanner } from './components/sections/ProjectPlanner';
 import { FinalCTA } from './components/sections/FinalCTA';
 import { Footer } from './components/sections/Footer';
+import { AboutPage } from './components/pages/AboutPage';
 
 export const App: React.FC = () => {
+  const [currentPath, setCurrentPath] = useState(
+    typeof window !== 'undefined' ? window.location.pathname : '/'
+  );
   const [activeSection, setActiveSection] = useState('hero');
   const [isCommandOpen, setIsCommandOpen] = useState(false);
-  const [activeWorkFilter, setActiveWorkFilter] = useState('ALL');
   const [plannerService, setPlannerService] = useState<string | undefined>(undefined);
+  const [consultationService, setConsultationService] = useState<string>('logo-design');
   
   // Cursor context state
   const [cursorText, setCursorText] = useState('');
@@ -43,14 +46,34 @@ export const App: React.FC = () => {
     setCursorVariant('default');
   };
 
+  // Browser History and Route Navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateToAbout = () => {
+    window.history.pushState({}, '', '/about');
+    setCurrentPath('/about');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToHome = () => {
+    window.history.pushState({}, '', '/');
+    setCurrentPath('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Initialize Lenis smooth scroll
   useEffect(() => {
-    // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -69,14 +92,15 @@ export const App: React.FC = () => {
       cancelAnimationFrame(reqId);
       lenis.destroy();
     };
-  }, []);
+  }, [currentPath]);
 
-  // Intersection Observer for Active Section Highlight
+  // Intersection Observer for Active Section Highlight on homepage
   useEffect(() => {
+    if (currentPath !== '/') return;
+
     const sections = [
       'hero',
       'services',
-      'work',
       'about',
       'playground',
       'consultation',
@@ -100,20 +124,29 @@ export const App: React.FC = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPath]);
 
   const handleNavigate = (sectionId: string) => {
+    if (currentPath !== '/') {
+      navigateToHome();
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const handleFilterWorkFromService = (
-    filter: 'BRANDING' | 'GRAPHICS' | 'APPAREL' | 'UI/UX' | 'WEB'
-  ) => {
-    setActiveWorkFilter(filter);
-    handleNavigate('work');
+  const handleSelectServiceForConsultation = (serviceId: string) => {
+    setConsultationService(serviceId);
+    handleNavigate('consultation');
   };
 
   const handleSelectPackage = (packageName: string) => {
@@ -123,7 +156,7 @@ export const App: React.FC = () => {
 
   return (
     <CursorContext.Provider value={{ cursorText, cursorVariant, setCursor, resetCursor }}>
-      <div className="relative min-h-screen bg-[#FAF9F6] text-[#18181B] flex flex-col antialiased selection:bg-avora-lavender selection:text-white">
+      <div className="relative min-h-screen bg-[#FAF9F6] text-[#18181B] flex flex-col antialiased selection:bg-purple-200 selection:text-black">
         {/* Custom Contextual Cursor */}
         <CustomCursor />
 
@@ -132,6 +165,8 @@ export const App: React.FC = () => {
           onOpenCommand={() => setIsCommandOpen(true)}
           activeSection={activeSection}
           onNavigate={handleNavigate}
+          onNavigateAbout={navigateToAbout}
+          onSelectServiceConsultation={handleSelectServiceForConsultation}
         />
 
         {/* Accessible Command Palette (⌘K / Ctrl+K) */}
@@ -139,31 +174,33 @@ export const App: React.FC = () => {
           isOpen={isCommandOpen}
           onClose={() => setIsCommandOpen(false)}
           onNavigate={handleNavigate}
+          onNavigateAbout={navigateToAbout}
         />
 
-        {/* Main Content Sections */}
-        <main className="flex-1 w-full">
-          <Hero onNavigate={handleNavigate} />
-          <TickerIntro />
-          <VisualServices onFilterWork={handleFilterWorkFromService} />
-          <SelectedWork
-            activeFilter={activeWorkFilter}
-            onFilterChange={setActiveWorkFilter}
-            onNavigate={handleNavigate}
+        {/* View Switcher: Dedicated About Page vs Main Studio Homepage */}
+        {currentPath === '/about' ? (
+          <AboutPage
+            onBackToHome={navigateToHome}
+            onNavigateHomeSection={handleNavigate}
           />
-          <DesignedThenBuilt />
-          <Playground />
-          <Toolkit />
-          <About onNavigate={handleNavigate} />
-          <Testimonials />
-          <Consultation />
-          <Packages onSelectPackage={handleSelectPackage} />
-          <ProjectPlanner initialService={plannerService} />
-          <FinalCTA onNavigate={handleNavigate} />
-        </main>
-
-        {/* Footer */}
-        <Footer onNavigate={handleNavigate} />
+        ) : (
+          /* Main Homepage Flow (Selected Work completely removed) */
+          <main className="flex-1 w-full">
+            <Hero onNavigate={handleNavigate} />
+            <TickerIntro />
+            <VisualServices onSelectConsultation={handleSelectServiceForConsultation} />
+            <DesignedThenBuilt />
+            <Playground />
+            <Toolkit />
+            <About onNavigate={handleNavigate} onNavigateAbout={navigateToAbout} />
+            <Testimonials />
+            <Consultation initialServiceId={consultationService} />
+            <Packages onSelectPackage={handleSelectPackage} />
+            <ProjectPlanner initialService={plannerService} />
+            <FinalCTA onNavigate={handleNavigate} />
+            <Footer onNavigate={handleNavigate} onNavigateAbout={navigateToAbout} />
+          </main>
+        )}
       </div>
     </CursorContext.Provider>
   );

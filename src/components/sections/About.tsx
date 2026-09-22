@@ -4,9 +4,10 @@ import { ArrowUpRight, Download, Sparkles, Compass } from 'lucide-react';
 
 interface AboutProps {
   onNavigate: (sectionId: string) => void;
+  onNavigateAbout?: () => void;
 }
 
-export const About: React.FC<AboutProps> = ({ onNavigate }) => {
+export const About: React.FC<AboutProps> = ({ onNavigate, onNavigateAbout }) => {
   const studioPillars = [
     { title: 'Multidisciplinary', subtitle: 'Core Discipline', detail: 'Branding, graphics, streetwear apparel, UI/UX and fullstack web experiences.' },
     { title: 'Design-First', subtitle: 'Creative Direction', detail: 'Rigorous typography, grid architecture, and physical tactile materiality.' },
@@ -73,7 +74,13 @@ Available for select commissions, brand identity systems, and digital flagships.
 
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <button
-                onClick={() => onNavigate('planner')}
+                onClick={() => {
+                  if (onNavigateAbout) {
+                    onNavigateAbout();
+                  } else {
+                    onNavigate('planner');
+                  }
+                }}
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-avora-charcoal text-white text-xs font-sans font-semibold hover:bg-black transition-all shadow-sm"
               >
                 <span>More About AVORA</span>
