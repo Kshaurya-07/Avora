@@ -1470,7 +1470,14 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               <User className="w-3.5 h-3.5" />
                               <span>Full Name *</span>
                             </span>
-                            <span className="text-[10px] text-zinc-400">Required</span>
+                            {contact.name.trim().length >= 2 && !nameError ? (
+                              <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Valid</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-zinc-400">Required</span>
+                            )}
                           </label>
                           <input
                             type="text"
@@ -1483,7 +1490,9 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                             }}
                             className={`w-full p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-sans transition-all focus:outline-none focus:ring-2 ${
                               nameError
-                                ? 'border-rose-300 focus:ring-rose-400'
+                                ? 'border-rose-300 focus:ring-rose-400 bg-rose-50/20'
+                                : contact.name.trim().length >= 2
+                                ? 'border-emerald-400 focus:ring-emerald-400 bg-emerald-50/20'
                                 : 'border-avora-border focus:ring-purple-500'
                             }`}
                           />
@@ -1502,7 +1511,14 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               <Mail className="w-3.5 h-3.5" />
                               <span>Email Address *</span>
                             </span>
-                            <span className="text-[10px] text-zinc-400">Required</span>
+                            {contact.email && EMAIL_REGEX.test(contact.email) && !emailError ? (
+                              <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Valid</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-zinc-400">Required</span>
+                            )}
                           </label>
                           <input
                             type="email"
@@ -1515,7 +1531,9 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                             }}
                             className={`w-full p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-sans transition-all focus:outline-none focus:ring-2 ${
                               emailError
-                                ? 'border-rose-300 focus:ring-rose-400'
+                                ? 'border-rose-300 focus:ring-rose-400 bg-rose-50/20'
+                                : contact.email && EMAIL_REGEX.test(contact.email)
+                                ? 'border-emerald-400 focus:ring-emerald-400 bg-emerald-50/20'
                                 : 'border-avora-border focus:ring-purple-500'
                             }`}
                           />
@@ -1534,7 +1552,14 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               <Phone className="w-3.5 h-3.5" />
                               <span>Phone Number *</span>
                             </span>
-                            <span className="text-[10px] text-zinc-400">Required</span>
+                            {contact.phone && contact.phone.replace(/\D/g, '').length >= 7 && !phoneError ? (
+                              <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>Valid</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-zinc-400">Required</span>
+                            )}
                           </label>
                           <div className="flex gap-2">
                             {/* Country code selector */}
@@ -1563,7 +1588,9 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               }}
                               className={`flex-1 p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-mono transition-all focus:outline-none focus:ring-2 ${
                                 phoneError
-                                  ? 'border-rose-300 focus:ring-rose-400'
+                                  ? 'border-rose-300 focus:ring-rose-400 bg-rose-50/20'
+                                  : contact.phone && contact.phone.replace(/\D/g, '').length >= 7
+                                  ? 'border-emerald-400 focus:ring-emerald-400 bg-emerald-50/20'
                                   : 'border-avora-border focus:ring-purple-500'
                               }`}
                             />
