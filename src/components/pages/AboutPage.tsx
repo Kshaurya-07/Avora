@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -18,6 +18,9 @@ import {
   HelpCircle,
   Eye,
   Terminal,
+  ChevronDown,
+  ChevronRight,
+  Check,
 } from 'lucide-react';
 
 interface AboutPageProps {
@@ -26,17 +29,90 @@ interface AboutPageProps {
 }
 
 export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHomeSection }) => {
-  const [activeProcessTab, setActiveProcessTab] = useState<string>('logo');
+  const [selectedProcessStep, setSelectedProcessStep] = useState<number>(0);
+  const [serviceStageMap, setServiceStageMap] = useState<Record<string, number>>({
+    logo: 0,
+    branding: 0,
+    graphic: 0,
+    apparel: 0,
+    uiux: 0,
+    webdesign: 0,
+    webdev: 0,
+  });
 
   const eightStepProcess = [
-    { number: '01', title: 'DISCOVER', desc: 'Understand the underlying idea, market landscape, user objectives, and core creative ambitions.' },
-    { number: '02', title: 'DEFINE', desc: 'Synthesize requirements to establish clear design constraints, art direction tone, and functional scope.' },
-    { number: '03', title: 'EXPLORE', desc: 'Investigate typographic pairings, golden ratio geometry, composition studies, and material moodboards.' },
-    { number: '04', title: 'DESIGN', desc: 'Craft the cohesive visual system, vector marks, apparel layouts, and pixel-precise interactive UI.' },
-    { number: '05', title: 'REFINE', desc: 'Iterate based on optical alignment, chromatic balance, micro-spacing calibrations, and feedback.' },
-    { number: '06', title: 'BUILD', desc: 'Translate approved designs into production React, Next.js, and Three.js WebGL with 120Hz-ready fluid motion.' },
-    { number: '07', title: 'TEST', desc: 'Audit performance, Lighthouse Core Web Vitals, cross-device responsiveness, and accessibility (WCAG AA+).' },
-    { number: '08', title: 'DELIVER', desc: 'Package vector assets, production build deployment, and documentation for client ownership.' },
+    {
+      number: '01',
+      title: 'DISCOVER',
+      subtitle: 'Context & Vision Extraction',
+      desc: 'Understand the underlying idea, market landscape, user objectives, and core creative ambitions.',
+      focus: 'Market Positioning & Creative Intent',
+      deliverables: ['Brand Brief', 'Aesthetic Benchmarks', 'Strategic Scope'],
+      diagramType: 'discover',
+    },
+    {
+      number: '02',
+      title: 'DEFINE',
+      subtitle: 'Constraints & System Architecture',
+      desc: 'Synthesize requirements to establish clear design constraints, art direction tone, and functional scope.',
+      focus: 'System Architecture & Design Constraints',
+      deliverables: ['Design Constraints', 'Typography Spec', 'Feature Matrix'],
+      diagramType: 'define',
+    },
+    {
+      number: '03',
+      title: 'EXPLORE',
+      subtitle: 'Divergent Form Exploration',
+      desc: 'Investigate typographic pairings, golden ratio geometry, composition studies, and material moodboards.',
+      focus: 'Geometry, Chromatics & Composition Studies',
+      deliverables: ['Golden Ratio Grids', 'Color Swatches', 'Moodboards'],
+      diagramType: 'explore',
+    },
+    {
+      number: '04',
+      title: 'DESIGN',
+      subtitle: 'Core Asset & Interface Crafting',
+      desc: 'Craft the cohesive visual system, vector marks, apparel layouts, and pixel-precise interactive UI.',
+      focus: 'Vector Precision & UI Token Hierarchy',
+      deliverables: ['Vector Marks', 'Responsive Layouts', 'Design Tokens'],
+      diagramType: 'design',
+    },
+    {
+      number: '05',
+      title: 'REFINE',
+      subtitle: 'Micro-Calibration & Optical Tuning',
+      desc: 'Iterate based on optical alignment, chromatic balance, micro-spacing calibrations, and feedback.',
+      focus: 'Optical Alignment & WCAG AA+ Contrast',
+      deliverables: ['Kerning Adjustments', 'Contrast Compliance', 'Prototype Polish'],
+      diagramType: 'refine',
+    },
+    {
+      number: '06',
+      title: 'BUILD',
+      subtitle: '120Hz Frontend Engineering',
+      desc: 'Translate approved designs into production React, Next.js, and Three.js WebGL with 120Hz-ready fluid motion.',
+      focus: 'GPU-Accelerated Component Engineering',
+      deliverables: ['React Components', 'Three.js Shaders', 'Framer Motion Springs'],
+      diagramType: 'build',
+    },
+    {
+      number: '07',
+      title: 'TEST',
+      subtitle: 'Stress Testing & Performance Audit',
+      desc: 'Audit performance, Lighthouse Core Web Vitals, cross-device responsiveness, and accessibility (WCAG AA+).',
+      focus: 'Lighthouse 100 & Cross-Device Resilience',
+      deliverables: ['Core Web Vitals 100/100', 'Mobile Viewport Tests', 'Accessibility Audit'],
+      diagramType: 'test',
+    },
+    {
+      number: '08',
+      title: 'DELIVER',
+      subtitle: 'Master Package & Deployment',
+      desc: 'Package vector assets, production build deployment, and documentation for client ownership.',
+      focus: 'Full Client Ownership & Live Launch',
+      deliverables: ['Master Vector Bundle', 'Production Deployment', 'Complete Documentation'],
+      diagramType: 'deliver',
+    },
   ];
 
   const serviceDeepDives = [
@@ -49,8 +125,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Monograms, geometric symbols, wordmarks, construction grids, and responsive multi-scale lockup suites.',
       tools: 'Adobe Illustrator, Figma, Canva, Geometry Math Grids',
       aiUsage: 'Rapid conceptual brainstorming & semantic ideation; 100% human vector crafting.',
-      processSteps: ['Research', 'Brand Understanding', 'Concept Exploration', 'Sketch / Geometry', 'Typography', 'Refinement', 'Variations', 'Final Logo System'],
-      animationType: 'geometry'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Inquiry & Conceptual Roots',
+          explanation: 'Deep dive into your brand core, competitors, and semantic territory to isolate timeless visual concepts.',
+          visualContent: 'Concept Mindmap: Geometry • Simplicity • Memory • Scalability',
+          stageOutput: 'Creative Brief & Concept Direction',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Mathematical Geometry & Sketching',
+          explanation: 'Drawing with golden ratio circular calipers and precision vector bezier curves to establish structural balance.',
+          visualContent: 'Golden Ratio Grid: 1:1.618 circular geometry overlay on mark',
+          stageOutput: '3 Distinct Logo Vector Archetypes',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'Optical Kerning & Scale Testing',
+          explanation: 'Calibrating stroke weights for 16px favicon rendering up to billboard scales. Optical spacing and legibility tuning.',
+          visualContent: 'Scale Matrix: 16px • 32px • 120px • 1200px lockup tests',
+          stageOutput: 'Master Wordmark & Monogram Lockup Suite',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Production Assets & Guidelines',
+          explanation: 'Exporting infinitely scalable SVGs, EPS vectors, high-res PNGs, and clear construction documentation.',
+          visualContent: 'Deliverables Bundle: SVG + EPS + Dark/Light Variants + Guidelines',
+          stageOutput: 'Client Master Vector Package',
+        },
+      ],
     },
     {
       id: 'branding',
@@ -61,8 +169,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Complete brand guidelines, typography hierarchies, Pantone color systems, tactile packaging, and business suites.',
       tools: 'Figma, Adobe Illustrator, Canva, Photoshop',
       aiUsage: 'Moodboard thematic clustering, copy exploration, market positioning research.',
-      processSteps: ['Discovery', 'Positioning', 'Moodboard', 'Visual Direction', 'Logo System', 'Typography', 'Color System', 'Applications', 'Guidelines'],
-      animationType: 'identity'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Brand DNA & Positioning',
+          explanation: 'Synthesizing your value proposition, tone of voice, and market category to identify a distinctive visual lane.',
+          visualContent: 'Positioning Matrix: High-End vs Accessible • Editorial vs Brutalist',
+          stageOutput: 'Brand Strategy Document',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Chromatic & Typographic Moodboards',
+          explanation: 'Curating Pantone pairings, editorial serif and monospace typography combinations, and physical materiality.',
+          visualContent: 'Color Swatches: #18181B • #FAF9F6 • #C084FC • #38BDF8',
+          stageOutput: 'Comprehensive Visual Direction Deck',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'System Stress-Testing',
+          explanation: 'Applying the identity across digital banners, business cards, invoice templates, and product packaging.',
+          visualContent: 'Collateral Mockup: Stationery, packaging box, social tokens',
+          stageOutput: 'Omnichannel Application Suite',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Master Brand Guidelines & Tokens',
+          explanation: 'Publishing an exhaustive digital brand guideline detailing typography rules, clear space, and token variables.',
+          visualContent: 'Design Token Spec: Font families, spacing scale, hex values',
+          stageOutput: 'Brand Book PDF & Figma Token Library',
+        },
+      ],
     },
     {
       id: 'graphic',
@@ -73,8 +213,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Silkscreen posters, exhibition graphics, marketing collateral, social design systems (Canva/Figma), and decks.',
       tools: 'Canva (Agile marketing visuals), Adobe Photoshop, Adobe Illustrator, Figma',
       aiUsage: 'Visual asset synthesis, texture ideation, rapid social format adaptation.',
-      processSteps: ['Brief', 'Content Analysis', 'Research', 'Concept', 'Composition', 'Typography', 'Design', 'Refinement', 'Final Assets'],
-      animationType: 'poster'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Narrative & Content Hierarchy',
+          explanation: 'Determining the primary focal hook, message priority, and distribution channels for maximum visual impact.',
+          visualContent: 'Information Hierarchy: Headline (70%) • Visual (20%) • Details (10%)',
+          stageOutput: 'Content Architecture & Focal Points',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Editorial Layout & High-Fashion Grid',
+          explanation: 'Composing Swiss-style spatial layouts, experimental typographic scales, and texture overlays.',
+          visualContent: 'Editorial 3:4 Composition: Asymmetric columns & negative space',
+          stageOutput: '3 Poster & Campaign Concepts',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'Grain, Halftones & Print Separations',
+          explanation: 'Applying analog photo grain, chromatic duotone mapping, and print-ready color separation profiles.',
+          visualContent: 'Halftone & CMYK Spec: 300 DPI high-fidelity output',
+          stageOutput: 'Master Artwork at Production Res',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Multi-Channel & Canva Systems',
+          explanation: 'Creating easily editable Canva social templates and print-ready CMYK PDFs for immediate deployment.',
+          visualContent: 'Canva Social Kit: 9:16 Stories • 1:1 Posts • 16:9 Decks',
+          stageOutput: 'Canva Template Links & Print-Ready Files',
+        },
+      ],
     },
     {
       id: 'apparel',
@@ -85,8 +257,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Oversized t-shirt & hoodie graphics, tech packs, technical print placements, woven neck labels, and lookbook art direction.',
       tools: 'Adobe Illustrator, Photoshop, Physical Tech Packs',
       aiUsage: 'Garment drape ideation, theme brainstorming; tech packs are manually vectorized.',
-      processSteps: ['Concept', 'Audience', 'Garment Selection', 'Graphic Direction', 'Print Placement', 'Typography / Illustration', 'Mockup', 'Production Artwork'],
-      animationType: 'garment'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Subcultural Theme & Fabric Curation',
+          explanation: 'Analyzing garment weight (e.g. 280 GSM heavyweight cotton), drop-shoulder cuts, and subcultural cues.',
+          visualContent: 'Fabric & Cut Spec: Boxy fit • 100% French Terry / Heavyweight cotton',
+          stageOutput: 'Garment Direction & Moodboard',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Graphic Placement & Scale Studies',
+          explanation: 'Testing chest pocket typography, oversized back prints, and sleeve coordinates across garment silhouettes.',
+          visualContent: 'Placement Blueprint: Front 12cm mark • Back 38cm artwork',
+          stageOutput: 'Front & Back Silhouette Visuals',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'Colorway Separations & Ink Profiling',
+          explanation: 'Specifying water-based inks, puff print highlights, screen mesh counts, and spot Pantone colors.',
+          visualContent: 'Screen Separation: 3 Spot Pantone Colors + Underbase',
+          stageOutput: 'Production-Separated Vector Art',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Factory Tech Pack Deliverable',
+          explanation: 'Producing exact millimeter measurement callouts, neck label art, and care tag specifications for garment manufacturers.',
+          visualContent: 'Tech Pack PDF: Dimension specs • Pantone callouts • Stitching notes',
+          stageOutput: 'Complete Factory-Ready Tech Pack',
+        },
+      ],
     },
     {
       id: 'uiux',
@@ -97,8 +301,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Multi-device design systems, clickable prototypes, wireframe architectures, dashboards, and mobile iOS/Android screens.',
       tools: 'Figma, FigJam, Principle, Whimsical',
       aiUsage: 'User persona research, UX copywriting exploration, workflow edge-case stress testing.',
-      processSteps: ['Research', 'User Understanding', 'Information Architecture', 'User Flow', 'Wireframes', 'Design System', 'UI Design', 'Prototype', 'Testing', 'Handoff'],
-      animationType: 'interface'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'User Journeys & Workflow Mapping',
+          explanation: 'Mapping user personas, core task funnels, and friction points into clean information architecture.',
+          visualContent: 'User Journey Flow: Sign Up → Onboard → Core Value Trigger',
+          stageOutput: 'Information Architecture Map',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Low-Fidelity Wireframing',
+          explanation: 'Drafting structural layout alternatives focusing on usability, scanability, and thumb-zone ergonomics.',
+          visualContent: 'Wireframe Layout: Multi-screen low-fi navigation schematics',
+          stageOutput: 'Full Clickable Wireframe Prototype',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'Design System & Token Hierarchy',
+          explanation: 'Building reusable auto-layout components, color tokens, typography scales, and interactive states in Figma.',
+          visualContent: 'Figma Component Set: Buttons, inputs, modals with hover/active states',
+          stageOutput: 'High-Fidelity Component Library',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Interactive Prototype & Redline Handoff',
+          explanation: 'Creating dynamic micro-interactions, responsive device breakdowns, and exact engineering redlines for developers.',
+          visualContent: 'Developer Handoff: Tokens, layout specs, micro-interaction guides',
+          stageOutput: 'Interactive Figma Prototype & Dev Specs',
+        },
+      ],
     },
     {
       id: 'webdesign',
@@ -109,8 +345,40 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Fluid responsive layout systems, custom scroll choreography, interactive 3D concepts, and micro-states.',
       tools: 'Figma, Adobe Creative Suite, Blender (Assets)',
       aiUsage: 'Atmospheric visual generation, typography pairing experiments, layout prototyping.',
-      processSteps: ['Discovery', 'Structure', 'Content', 'Wireframes', 'Visual Direction', 'UI Design', 'Responsive Layout', 'Interaction', 'Prototype'],
-      animationType: 'browser'
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Editorial Rhythm & Content Strategy',
+          explanation: 'Architecting the narrative arc from hero arrival to final conversion CTA with calibrated pacing.',
+          visualContent: 'Page Arc Blueprint: Hook (Hero) → Proof → Detail → Action (CTA)',
+          stageOutput: 'Sitemap & Content Choreography',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Hero & Viewport Exploration',
+          explanation: 'Designing cinematic typography, spatial grid layouts, and dynamic 3D focal elements.',
+          visualContent: '1440px Viewport Mockup: High-contrast typography & glass crystal',
+          stageOutput: 'Visual Direction & Hero Prototypes',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: 'Responsive Fluid Scaling & Motion Specs',
+          explanation: 'Creating seamless breakpoints across 390px mobile, 768px tablet, 1440px laptop, and 2560px 4K displays.',
+          visualContent: 'Responsive Breakpoints: Mobile • Tablet • Desktop layouts',
+          stageOutput: 'Complete Multi-Device Design System',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Interaction Documentation & Assets',
+          explanation: 'Exporting optimized SVGs, WebP visual assets, and detailed scroll interaction storyboards.',
+          visualContent: 'Interaction Map: Scroll trigger points & spring physics curves',
+          stageOutput: 'Ready-to-Develop Design Package',
+        },
+      ],
     },
     {
       id: 'webdev',
@@ -121,10 +389,206 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
       whatAvoraCreates: 'Custom React & Next.js web applications, Three.js WebGL shaders, Tailwind CSS styling, and Lenis momentum scrolling.',
       tools: 'React, Next.js, Three.js, TypeScript, Tailwind CSS, Framer Motion, Vite',
       aiUsage: 'Code autocompletion, regex assistance, unit test scaffolding, debugging assistance.',
-      processSteps: ['Technical Planning', 'Architecture', 'Component Structure', 'Development', 'Integration', 'Animation', 'Responsive Implementation', 'Testing', 'Optimization', 'Deployment'],
-      animationType: 'code'
-    }
+      stages: [
+        {
+          number: '01',
+          name: 'DISCOVER',
+          summary: 'Technical Architecture & Performance Budget',
+          explanation: 'Establishing the stack (Vite/React/Three.js), bundle size limits, and sub-100ms interaction budgets.',
+          visualContent: 'Architecture: Vite SPA • Node Native Server • WebGL Render Loop',
+          stageOutput: 'System Architecture Specification',
+        },
+        {
+          number: '02',
+          name: 'EXPLORE',
+          summary: 'Component Engineering & Shader Scaffolding',
+          explanation: 'Writing modular TypeScript components, custom Three.js transmission materials, and responsive layouts.',
+          visualContent: 'Code Stack: React 18 hooks • Three.js MeshTransmissionMaterial',
+          stageOutput: 'Core Interactive Application Engine',
+        },
+        {
+          number: '03',
+          name: 'REFINE',
+          summary: '120Hz Motion Tuning & Accessibility',
+          explanation: 'Calibrating GPU transforms, eliminating layout recalculations, and auditing WCAG AA+ keyboard navigation.',
+          visualContent: '60/120 FPS Monitor: GPU transform/opacity only • Zero sound',
+          stageOutput: 'Butter-Smooth Performance Profile',
+        },
+        {
+          number: '04',
+          name: 'FINALIZE',
+          summary: 'Lighthouse 100 & Production Edge Deploy',
+          explanation: 'Testing Core Web Vitals, deploying on edge hosting, and delivering clean, well-commented source code.',
+          visualContent: 'Audit Scorecard: Performance 100 • Accessibility 100 • SEO 100',
+          stageOutput: 'Live Deployed Web Application',
+        },
+      ],
+    },
   ];
+
+  const renderProcessDiagram = (type: string) => {
+    switch (type) {
+      case 'discover':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-purple-50/50 to-blue-50/30 rounded-2xl border border-purple-100">
+            <div className="relative w-40 h-40 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border border-dashed border-purple-300 animate-spin-slow" />
+              <div className="absolute inset-4 rounded-full border border-purple-200" />
+              <div className="w-16 h-16 rounded-full bg-white border border-purple-300 shadow-md flex items-center justify-center">
+                <Compass className="w-6 h-6 text-purple-600 animate-pulse" />
+              </div>
+              <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-white px-2 py-0.5 rounded border border-purple-200 text-purple-700">Market</span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-white px-2 py-0.5 rounded border border-purple-200 text-purple-700">Vision</span>
+              <span className="absolute top-1/2 -left-3 -translate-y-1/2 text-[9px] font-mono bg-white px-2 py-0.5 rounded border border-purple-200 text-purple-700">Users</span>
+              <span className="absolute top-1/2 -right-3 -translate-y-1/2 text-[9px] font-mono bg-white px-2 py-0.5 rounded border border-purple-200 text-purple-700">Brand</span>
+            </div>
+            <span className="text-[10px] font-mono text-purple-600 font-semibold mt-4">DISCOVERY RADAR & MARKET AUDIT</span>
+          </div>
+        );
+      case 'define':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-blue-50/50 to-purple-50/30 rounded-2xl border border-blue-100">
+            <div className="w-48 p-4 bg-white rounded-xl border border-blue-200 shadow-xs space-y-2.5">
+              <div className="flex justify-between items-center text-[10px] font-mono text-blue-700 border-b border-blue-100 pb-1">
+                <span>CONSTRAINTS</span>
+                <span className="font-bold">STATUS</span>
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-avora-charcoal">
+                <span>Typography</span>
+                <span className="text-emerald-600 font-semibold">Defined</span>
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-avora-charcoal">
+                <span>Chromatic Rules</span>
+                <span className="text-emerald-600 font-semibold">Locked</span>
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-avora-charcoal">
+                <span>Core Objectives</span>
+                <span className="text-purple-600 font-semibold">100% Aligned</span>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-blue-600 font-semibold mt-4">CREATIVE CONSTRAINTS SPECIFICATION</span>
+          </div>
+        );
+      case 'explore':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-pink-50/50 to-purple-50/30 rounded-2xl border border-pink-100">
+            <div className="relative w-44 h-32 flex items-center justify-center">
+              <div className="absolute inset-0 border border-pink-300 rounded-lg" />
+              <div className="absolute top-2 left-2 w-12 h-12 rounded-full border border-dashed border-purple-400" />
+              <div className="absolute bottom-2 right-2 w-20 h-20 rounded-full border border-blue-400" />
+              <div className="flex gap-2">
+                <span className="w-6 h-6 rounded-full bg-[#18181B] shadow-xs" />
+                <span className="w-6 h-6 rounded-full bg-[#C084FC] shadow-xs" />
+                <span className="w-6 h-6 rounded-full bg-[#38BDF8] shadow-xs" />
+                <span className="w-6 h-6 rounded-full bg-[#FAF9F6] border border-gray-300 shadow-xs" />
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-pink-600 font-semibold mt-4">GOLDEN RATIO GEOMETRY & SWATCHES</span>
+          </div>
+        );
+      case 'design':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-purple-50/50 to-emerald-50/30 rounded-2xl border border-purple-100">
+            <div className="w-48 h-32 bg-white rounded-xl border border-purple-200 shadow-xs relative overflow-hidden flex flex-col justify-between p-3">
+              <div className="flex items-center gap-1.5 border-b border-gray-100 pb-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-400" />
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-[9px] font-mono text-gray-400 ml-auto">Vector Bézier</span>
+              </div>
+              <div className="flex items-center justify-center my-auto">
+                <PenTool className="w-8 h-8 text-purple-600 animate-pulse" />
+              </div>
+              <div className="text-[9px] font-mono text-center text-purple-700 font-medium">
+                P(x, y) = (1-t)³P₀ + 3(1-t)²tP₁
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-purple-600 font-semibold mt-4">VECTOR BEZIER & INTERFACE TOKENS</span>
+          </div>
+        );
+      case 'refine':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-amber-50/50 to-purple-50/30 rounded-2xl border border-amber-100">
+            <div className="w-48 p-3 bg-white rounded-xl border border-amber-200 shadow-xs space-y-2">
+              <div className="text-[10px] font-mono text-amber-800 font-bold flex justify-between">
+                <span>OPTICAL TUNING</span>
+                <span>Δe &lt; 0.5</span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] font-mono text-gray-600">
+                  <span>Kerning Balance:</span>
+                  <span className="text-emerald-600 font-bold">+0.02 em</span>
+                </div>
+                <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-emerald-500 h-full w-[95%]" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] font-mono text-gray-600">
+                  <span>Contrast Ratio:</span>
+                  <span className="text-purple-600 font-bold">14.8:1 (AAA)</span>
+                </div>
+                <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-purple-500 h-full w-[100%]" />
+                </div>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-amber-700 font-semibold mt-4">OPTICAL KERNING & WCAG AAA AUDIT</span>
+          </div>
+        );
+      case 'build':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-cyan-50/50 to-blue-50/30 rounded-2xl border border-cyan-100">
+            <div className="w-48 p-3 bg-[#18181B] text-emerald-400 rounded-xl shadow-md font-mono text-[10px] space-y-1">
+              <div className="text-gray-400">// 120Hz Render Engine</div>
+              <div>&lt;<span className="text-blue-400">GlassCrystal</span> /&gt;</div>
+              <div className="text-purple-300">useFrame(lerp) =&gt; GPU</div>
+              <div className="text-amber-300">frameloop="always" 120fps</div>
+            </div>
+            <span className="text-[10px] font-mono text-cyan-700 font-semibold mt-4">REACT 18 + THREE.JS WEBGL PIPELINE</span>
+          </div>
+        );
+      case 'test':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 rounded-2xl border border-emerald-100">
+            <div className="flex gap-2">
+              <div className="w-14 h-14 rounded-full border-2 border-emerald-500 flex flex-col items-center justify-center bg-white shadow-xs">
+                <span className="text-xs font-mono font-bold text-emerald-600">100</span>
+                <span className="text-[7px] font-mono uppercase text-gray-400">Perf</span>
+              </div>
+              <div className="w-14 h-14 rounded-full border-2 border-emerald-500 flex flex-col items-center justify-center bg-white shadow-xs">
+                <span className="text-xs font-mono font-bold text-emerald-600">100</span>
+                <span className="text-[7px] font-mono uppercase text-gray-400">A11y</span>
+              </div>
+              <div className="w-14 h-14 rounded-full border-2 border-emerald-500 flex flex-col items-center justify-center bg-white shadow-xs">
+                <span className="text-xs font-mono font-bold text-emerald-600">100</span>
+                <span className="text-[7px] font-mono uppercase text-gray-400">SEO</span>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-emerald-700 font-semibold mt-4">LIGHTHOUSE AUDIT: PERFECT 100/100</span>
+          </div>
+        );
+      case 'deliver':
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center p-6 bg-gradient-to-br from-purple-50/50 to-indigo-50/30 rounded-2xl border border-purple-100">
+            <div className="w-48 p-3 bg-white rounded-xl border border-purple-200 shadow-sm space-y-2 text-[10px] font-mono">
+              <div className="flex items-center gap-1.5 text-purple-700 font-bold border-b border-purple-100 pb-1">
+                <Check className="w-3.5 h-3.5 text-purple-600" />
+                <span>MASTER DEPLOYMENT</span>
+              </div>
+              <div className="text-gray-600">• Vector Suite (.SVG, .EPS)</div>
+              <div className="text-gray-600">• Production Edge Build</div>
+              <div className="text-gray-600">• Full IP Ownership Handover</div>
+            </div>
+            <span className="text-[10px] font-mono text-purple-700 font-semibold mt-4">CLIENT MASTER ASSET PACK</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const activeStep = eightStepProcess[selectedProcessStep];
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#18181B] flex flex-col antialiased selection:bg-purple-200">
@@ -213,7 +677,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
               </p>
               <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono">
                 <span className="px-3 py-1 rounded-full bg-white border border-avora-border">
-                  Inquiries: <a href="mailto:kshaurya0708@gmail.com" className="text-purple-600 font-semibold underline">kshaurya0708@gmail.com</a>
+                  Inquiries: <a href="mailto:kshaurya0708@gmail.com" className="text-purple-600 font-semibold underline">Email AVORA ↗</a>
                 </span>
                 <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Accepting Q3 / Q4 Commissions
@@ -262,7 +726,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
           </div>
         </section>
 
-        {/* 03: 7 VISUAL SERVICE EXPLANATIONS */}
+        {/* 03: 7 VISUAL SERVICE EXPLANATIONS WITH EXPANDABLE PROCESSES (Requirement 23) */}
         <section className="space-y-8 border-b border-avora-border pb-20">
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-purple-600">
             <span>03</span>
@@ -270,72 +734,150 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
             <span>WHAT AVORA CREATES — 7 DISCIPLINES</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-avora-charcoal">
-            Visual & Functional Service Deep Dives.
-          </h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-avora-charcoal">
+                Interactive Service Deep Dives.
+              </h2>
+              <p className="text-xs font-mono text-avora-muted mt-2">
+                Click any step (01 Discover → 04 Finalize) in any service card below to inspect its exact methodology and visual blueprints.
+              </p>
+            </div>
+          </div>
 
-          <div className="space-y-6">
-            {serviceDeepDives.map((s) => (
-              <div
-                key={s.id}
-                className="p-6 sm:p-8 rounded-3xl bg-white border border-avora-border shadow-sm space-y-6"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-4 pb-4 border-b border-avora-border-light">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-purple-600 font-bold">{s.number}</span>
-                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-avora-charcoal">{s.name}</h3>
+          <div className="space-y-8">
+            {serviceDeepDives.map((s) => {
+              const activeStageIndex = serviceStageMap[s.id] ?? 0;
+              const currentStage = s.stages[activeStageIndex];
+
+              return (
+                <div
+                  key={s.id}
+                  className="p-6 sm:p-8 rounded-3xl bg-white border border-avora-border shadow-sm space-y-6"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-4 pb-4 border-b border-avora-border-light">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-mono text-purple-600 font-bold">{s.number}</span>
+                      <h3 className="font-serif text-2xl sm:text-3xl font-bold text-avora-charcoal">{s.name}</h3>
+                    </div>
+                    <span className="text-xs font-mono text-avora-muted">{s.whoNeedsIt}</span>
                   </div>
-                  <span className="text-xs font-mono text-avora-muted">{s.whoNeedsIt}</span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 text-xs font-sans">
+                    <div className="md:col-span-6 space-y-3">
+                      <div>
+                        <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">What It Is:</span>
+                        <p className="text-sm text-avora-charcoal font-medium mt-0.5 leading-relaxed">{s.whatIsIt}</p>
+                      </div>
+                      <div>
+                        <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">What AVORA Delivers:</span>
+                        <p className="text-xs text-avora-charcoal/80 mt-0.5 leading-relaxed">{s.whatAvoraCreates}</p>
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-6 space-y-3 md:border-l md:border-avora-border-light md:pl-6">
+                      <div>
+                        <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">Instruments & Tools:</span>
+                        <p className="text-xs font-mono text-purple-600 font-medium mt-0.5">{s.tools}</p>
+                      </div>
+                      <div>
+                        <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">Transparent AI Integration:</span>
+                        <p className="text-xs text-avora-muted mt-0.5">{s.aiUsage}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expandable Service Execution Flowchart (Requirement 23) */}
+                  <div className="pt-4 border-t border-avora-border-light space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-avora-muted">
+                        Interactive Step-by-Step Flow (Click to expand):
+                      </span>
+                      <span className="text-[10px] font-mono text-purple-600 font-semibold">
+                        Stage {activeStageIndex + 1} of 4: {currentStage.name}
+                      </span>
+                    </div>
+
+                    {/* Step Switcher Buttons */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {s.stages.map((stage, idx) => {
+                        const isActive = activeStageIndex === idx;
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              setServiceStageMap((prev) => ({
+                                ...prev,
+                                [s.id]: idx,
+                              }))
+                            }
+                            className={`p-3 rounded-xl border text-left transition-all ${
+                              isActive
+                                ? 'bg-purple-50/70 border-purple-300 shadow-xs ring-1 ring-purple-200'
+                                : 'bg-[#FAF9F6] border-avora-border-light hover:bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className={`text-[10px] font-mono font-bold ${
+                                isActive ? 'text-purple-600' : 'text-avora-muted'
+                              }`}>
+                                {stage.number} {stage.name}
+                              </span>
+                              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />}
+                            </div>
+                            <p className="text-[11px] font-sans font-medium text-avora-charcoal truncate mt-0.5">
+                              {stage.summary}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Expanded Detail Panel */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={activeStageIndex}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                        className="p-4 sm:p-5 rounded-2xl bg-[#FAF9F6] border border-avora-border-light grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                      >
+                        <div className="md:col-span-8 space-y-2">
+                          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800 text-[10px] font-mono font-semibold">
+                            <span>PHASE {currentStage.number} // {currentStage.name}</span>
+                          </div>
+                          <h4 className="font-serif text-base sm:text-lg font-bold text-avora-charcoal">
+                            {currentStage.summary}
+                          </h4>
+                          <p className="text-xs font-sans text-avora-charcoal/80 leading-relaxed">
+                            {currentStage.explanation}
+                          </p>
+                          <div className="pt-1 flex items-center gap-2 text-[11px] font-mono text-purple-700 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                            <span>Deliverable: {currentStage.stageOutput}</span>
+                          </div>
+                        </div>
+
+                        {/* Visual Blueprint Badge */}
+                        <div className="md:col-span-4 p-4 rounded-xl bg-white border border-avora-border shadow-xs text-center space-y-1">
+                          <span className="text-[9px] font-mono uppercase tracking-widest text-avora-muted block">
+                            Visual Blueprint & Spec
+                          </span>
+                          <p className="text-xs font-mono font-semibold text-avora-charcoal">
+                            {currentStage.visualContent}
+                          </p>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 text-xs font-sans">
-                  <div className="md:col-span-6 space-y-3">
-                    <div>
-                      <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">What It Is:</span>
-                      <p className="text-sm text-avora-charcoal font-medium mt-0.5 leading-relaxed">{s.whatIsIt}</p>
-                    </div>
-                    <div>
-                      <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">What AVORA Delivers:</span>
-                      <p className="text-xs text-avora-charcoal/80 mt-0.5 leading-relaxed">{s.whatAvoraCreates}</p>
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-6 space-y-3 md:border-l md:border-avora-border-light md:pl-6">
-                    <div>
-                      <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">Instruments & Tools:</span>
-                      <p className="text-xs font-mono text-purple-600 font-medium mt-0.5">{s.tools}</p>
-                    </div>
-                    <div>
-                      <span className="font-mono font-semibold uppercase text-avora-muted text-[10px]">Transparent AI Integration:</span>
-                      <p className="text-xs text-avora-muted mt-0.5">{s.aiUsage}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Service Process Visual Flow */}
-                <div className="pt-4 border-t border-avora-border-light">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-avora-muted block mb-2">
-                    Service Execution Flowchart:
-                  </span>
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
-                    {s.processSteps.map((step, idx) => (
-                      <React.Fragment key={idx}>
-                        <span className="px-2.5 py-1 rounded-md bg-[#FAF9F6] border border-avora-border-light text-avora-charcoal">
-                          {step}
-                        </span>
-                        {idx < s.processSteps.length - 1 && (
-                          <span className="text-avora-muted">→</span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
-        {/* 04: 8-STEP AVORA CREATIVE PROCESS */}
+        {/* 04: 8-STEP AVORA CREATIVE PROCESS WITH INTERACTIVE STAGE (Requirement 22) */}
         <section className="space-y-8 border-b border-avora-border pb-20">
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-purple-600">
             <span>04</span>
@@ -343,18 +885,142 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
             <span>HOW WE CREATE</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-5xl font-bold text-avora-charcoal">
-            The 8-Step Creative Process.
-          </h2>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-avora-charcoal">
+                The 8-Step Creative Process.
+              </h2>
+              <p className="text-xs font-mono text-avora-muted mt-2">
+                Click any step below to transform the central studio canvas with dynamic visual diagrams.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedProcessStep((prev) => Math.max(0, prev - 1))}
+                disabled={selectedProcessStep === 0}
+                className="px-3 py-1.5 rounded-lg border border-avora-border text-xs font-mono disabled:opacity-30 hover:bg-white transition-colors"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs font-mono text-purple-600 font-semibold px-2">
+                {activeStep.number} / 08
+              </span>
+              <button
+                onClick={() => setSelectedProcessStep((prev) => Math.min(eightStepProcess.length - 1, prev + 1))}
+                disabled={selectedProcessStep === eightStepProcess.length - 1}
+                className="px-3 py-1.5 rounded-lg border border-avora-border text-xs font-mono disabled:opacity-30 hover:bg-white transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {eightStepProcess.map((step) => (
-              <div key={step.number} className="p-5 rounded-2xl bg-white border border-avora-border shadow-xs space-y-2">
-                <span className="font-mono text-xs text-purple-500 font-bold">{step.number}</span>
-                <h3 className="font-serif text-lg font-bold text-avora-charcoal">{step.title}</h3>
-                <p className="text-xs font-sans text-avora-muted leading-relaxed">{step.desc}</p>
+          {/* Stepper Navigation Bar */}
+          <div className="flex items-center overflow-x-auto gap-2 pb-2 scrollbar-none">
+            {eightStepProcess.map((step, idx) => {
+              const isSelected = selectedProcessStep === idx;
+              return (
+                <button
+                  key={step.number}
+                  onClick={() => setSelectedProcessStep(idx)}
+                  className={`flex-shrink-0 px-4 py-2.5 rounded-xl border text-left transition-all ${
+                    isSelected
+                      ? 'bg-purple-600 text-white border-purple-600 shadow-md font-bold'
+                      : 'bg-white text-avora-charcoal border-avora-border hover:border-purple-300'
+                  }`}
+                >
+                  <div className="text-[10px] font-mono tracking-wider opacity-80">
+                    {step.number}
+                  </div>
+                  <div className="text-xs font-sans tracking-wide whitespace-nowrap">
+                    {step.title}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Central Interactive Showcase Stage */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedProcessStep}
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -8 }}
+              transition={{ duration: 0.25 }}
+              className="p-6 sm:p-8 rounded-3xl bg-white border border-purple-200 shadow-lg grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+            >
+              {/* Left Column: Details & Deliverables */}
+              <div className="md:col-span-7 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold">
+                    STEP {activeStep.number} OF 08
+                  </span>
+                  <span className="text-xs font-mono text-avora-muted">
+                    {activeStep.subtitle}
+                  </span>
+                </div>
+
+                <h3 className="font-serif text-3xl sm:text-4xl font-bold text-avora-charcoal">
+                  {activeStep.title}
+                </h3>
+
+                <p className="text-sm font-sans text-avora-charcoal/80 leading-relaxed">
+                  {activeStep.desc}
+                </p>
+
+                <div className="pt-2 border-t border-avora-border-light space-y-2">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-avora-muted block">
+                    Strategic Deliverables & Outputs:
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {activeStep.deliverables.map((item, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-lg bg-[#FAF9F6] border border-avora-border-light text-xs font-mono text-purple-800 font-medium"
+                      >
+                        ✓ {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-            ))}
+
+              {/* Right Column: Dynamic Visual Diagram */}
+              <div className="md:col-span-5 h-64 w-full">
+                {renderProcessDiagram(activeStep.diagramType)}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Quick Grid Overview */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {eightStepProcess.map((step, idx) => {
+              const isSelected = selectedProcessStep === idx;
+              return (
+                <div
+                  key={step.number}
+                  onClick={() => setSelectedProcessStep(idx)}
+                  className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-purple-50/80 border-purple-400 shadow-sm ring-1 ring-purple-200'
+                      : 'bg-white border-avora-border shadow-xs hover:border-purple-200'
+                  }`}
+                >
+                  <span className={`font-mono text-xs font-bold ${
+                    isSelected ? 'text-purple-600' : 'text-purple-500'
+                  }`}>
+                    {step.number}
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-avora-charcoal mt-1">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs font-sans text-avora-muted leading-relaxed mt-1">
+                    {step.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -476,9 +1142,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onNavigateHo
             </button>
             <a
               href="mailto:kshaurya0708@gmail.com"
-              className="px-8 py-3.5 rounded-full bg-[#FAF9F6] border border-avora-border text-avora-charcoal text-xs font-mono font-medium hover:bg-white transition-all"
+              className="px-8 py-3.5 rounded-full bg-[#FAF9F6] border border-avora-border text-avora-charcoal text-xs font-mono font-semibold hover:bg-white transition-all shadow-xs"
             >
-              kshaurya0708@gmail.com
+              Email AVORA ↗
             </a>
           </div>
         </section>

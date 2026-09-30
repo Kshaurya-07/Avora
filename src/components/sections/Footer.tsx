@@ -128,7 +128,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateAbout }) =
                 href="mailto:kshaurya0708@gmail.com"
                 className="text-avora-charcoal font-semibold underline hover:text-purple-600 transition-colors"
               >
-                kshaurya0708@gmail.com
+                Email AVORA ↗
               </a>
             </p>
           </div>

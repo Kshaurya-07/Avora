@@ -15,6 +15,16 @@ import {
   Globe,
   Code2,
   PenTool,
+  AlertCircle,
+  RefreshCw,
+  Phone,
+  Mail,
+  User,
+  Building,
+  Check,
+  Smartphone,
+  Monitor,
+  Terminal,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -31,32 +41,136 @@ type ServiceKey =
   | 'web-design'
   | 'web-development';
 
+interface CountryCode {
+  code: string;
+  name: string;
+  flag: string;
+}
+
+const COUNTRY_CODES: CountryCode[] = [
+  { code: '+91', name: 'India', flag: '🇮🇳' },
+  { code: '+1', name: 'USA / Canada', flag: '🇺🇸' },
+  { code: '+44', name: 'United Kingdom', flag: '🇬🇧' },
+  { code: '+971', name: 'United Arab Emirates', flag: '🇦🇪' },
+  { code: '+61', name: 'Australia', flag: '🇦🇺' },
+  { code: '+49', name: 'Germany', flag: '🇩🇪' },
+  { code: '+33', name: 'France', flag: '🇫🇷' },
+  { code: '+65', name: 'Singapore', flag: '🇸🇬' },
+  { code: '+81', name: 'Japan', flag: '🇯🇵' },
+  { code: '+41', name: 'Switzerland', flag: '🇨🇭' },
+  { code: '+31', name: 'Netherlands', flag: '🇳🇱' },
+  { code: '+34', name: 'Spain', flag: '🇪🇸' },
+  { code: '+39', name: 'Italy', flag: '🇮🇹' },
+  { code: '+46', name: 'Sweden', flag: '🇸🇪' },
+  { code: '+55', name: 'Brazil', flag: '🇧🇷' },
+  { code: '+27', name: 'South Africa', flag: '🇿🇦' },
+  { code: '+82', name: 'South Korea', flag: '🇰🇷' },
+  { code: '+966', name: 'Saudi Arabia', flag: '🇸🇦' },
+  { code: '+64', name: 'New Zealand', flag: '🇳🇿' },
+];
+
+const SERVICE_TITLES: Record<ServiceKey, { title: string; cta: string; accent: string; icon: React.ReactNode }> = {
+  'logo-design': {
+    title: "LET'S DESIGN YOUR LOGO.",
+    cta: 'START LOGO CONSULTATION ↗',
+    accent: '#C084FC',
+    icon: <PenTool className="w-4 h-4" />,
+  },
+  branding: {
+    title: 'BUILD YOUR BRAND.',
+    cta: 'START BRAND CONSULTATION ↗',
+    accent: '#A855F7',
+    icon: <Palette className="w-4 h-4" />,
+  },
+  'graphic-design': {
+    title: "LET'S CREATE THE VISUAL.",
+    cta: 'START GRAPHIC CONSULTATION ↗',
+    accent: '#F472B6',
+    icon: <Layers className="w-4 h-4" />,
+  },
+  apparel: {
+    title: "LET'S DESIGN WHAT PEOPLE WEAR.",
+    cta: 'START APPAREL CONSULTATION ↗',
+    accent: '#71717A',
+    icon: <Shirt className="w-4 h-4" />,
+  },
+  'ui-ux': {
+    title: "LET'S DESIGN THE EXPERIENCE.",
+    cta: 'START UI/UX CONSULTATION ↗',
+    accent: '#38BDF8',
+    icon: <Layout className="w-4 h-4" />,
+  },
+  'web-design': {
+    title: "LET'S DESIGN YOUR WEBSITE.",
+    cta: 'START WEB CONSULTATION ↗',
+    accent: '#60A5FA',
+    icon: <Globe className="w-4 h-4" />,
+  },
+  'web-development': {
+    title: "LET'S BUILD IT.",
+    cta: 'START DEVELOPMENT CONSULTATION ↗',
+    accent: '#10B981',
+    icon: <Code2 className="w-4 h-4" />,
+  },
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) => {
   const [selectedService, setSelectedService] = useState<ServiceKey>(
     (initialServiceId as ServiceKey) || 'logo-design'
   );
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [stepError, setStepError] = useState('');
+
+  // Honeypot spam protection
+  const [honeypot, setHoneypot] = useState('');
 
   // Update selected service if prop changes
   useEffect(() => {
-    if (initialServiceId) {
+    if (initialServiceId && SERVICE_TITLES[initialServiceId as ServiceKey]) {
       setSelectedService(initialServiceId as ServiceKey);
       setCurrentStep(1);
       setIsSubmitted(false);
     }
   }, [initialServiceId]);
 
-  // Common contact info
-  const [contact, setContact] = useState({
-    name: '',
-    email: '',
-    brandOrCompany: '',
-    referenceLinks: '',
-    deadline: '',
-    budget: '$3k – $6k',
+  // Session state preservation
+  const [contact, setContact] = useState(() => {
+    const saved = typeof window !== 'undefined' ? sessionStorage.getItem('avora_consultation_contact') : null;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (_) {}
+    }
+    return {
+      name: '',
+      email: '',
+      countryCode: '+91',
+      phone: '',
+      brandOrCompany: '',
+      meetingPreference: 'Video Call (30-min)',
+      preferredDate: '',
+      preferredTime: '',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      referenceLinks: '',
+      deadline: '4–6 Weeks',
+      budget: '$3,000 – $6,000',
+    };
   });
+
+  // Save contact state to session storage
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('avora_consultation_contact', JSON.stringify(contact));
+    } catch (_) {}
+  }, [contact]);
 
   // 01 Logo Design Form State
   const [logoState, setLogoState] = useState({
@@ -64,12 +178,12 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
     brandDescription: '',
     industry: '',
     targetAudience: '',
-    logoTypes: [] as string[],
-    brandPersonalities: [] as string[],
+    logoTypes: ['Wordmark', 'Symbol / Icon'] as string[],
+    brandPersonalities: ['Minimal', 'Luxury'] as string[],
     preferredColors: '',
     colorsToAvoid: '',
-    typographyPreference: '',
-    usageDestinations: [] as string[],
+    typographyPreference: 'Clean Modern Serif',
+    usageDestinations: ['Website', 'Social Media', 'Packaging'] as string[],
   });
 
   // 02 Branding Form State
@@ -78,13 +192,13 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
     industry: '',
     brandStory: '',
     targetAudience: '',
-    brandPersonality: [] as string[],
+    brandPersonality: ['Editorial Luxury', 'Modern'] as string[],
     currentIdentityStatus: 'Starting from scratch',
     whatNeedsToChange: '',
     logoStatus: 'Need new logo mark',
     typographyPreferences: '',
     colorPreferences: '',
-    brandApplications: [] as string[],
+    brandApplications: ['Full Style Manual', 'Packaging Mockups', 'Social Templates (Canva/Figma)'] as string[],
     packagingRequirements: '',
     socialMediaRequirements: '',
     websiteRequirements: '',
@@ -92,64 +206,64 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
   // 03 Graphic Design Form State
   const [graphicState, setGraphicState] = useState({
-    designItemTypes: [] as string[],
+    designItemTypes: ['Poster', 'Campaign Key Visual', 'Social Media System'] as string[],
     purpose: '',
     targetAudience: '',
-    dimensions: '',
+    dimensions: 'A1 Print & 9:16 Digital',
     contentCopy: '',
-    visualStyle: '',
+    visualStyle: 'High-fashion editorial, textured grain',
     hasBrandGuidelines: 'Yes, full guidelines exist',
-    requiredFormats: [] as string[],
-    numberOfDesigns: '1–3 pieces',
+    requiredFormats: ['Print PDF (CMYK)', 'Vector SVG', 'Web PNG / WebP'] as string[],
+    numberOfDesigns: '3–5 pieces',
   });
 
   // 04 Apparel Design Form State
   const [apparelState, setApparelState] = useState({
-    products: [] as string[],
-    designPlacements: [] as string[],
+    products: ['Heavyweight T-Shirt', 'Oversized Hoodie'] as string[],
+    designPlacements: ['Front Chest', 'Oversized Back', 'Puff Ink / Texture'] as string[],
     brandName: '',
     targetAudience: '',
-    apparelStyles: [] as string[],
-    printMethod: 'Screen Print / DTG',
-    garmentColor: '',
-    garmentType: 'Heavyweight Boxy Cotton',
-    quantity: '50–200 units',
+    apparelStyles: ['Streetwear', 'Minimal Luxury'] as string[],
+    printMethod: 'Screen Print / Puff Ink',
+    garmentColor: 'Faded Onyx & Bone White',
+    garmentType: '300gsm Boxy Cotton Tee / 480gsm Terry Hoodie',
+    quantity: '100–300 units',
   });
 
   // 05 UI/UX Design Form State
   const [uiuxState, setUiuxState] = useState({
-    productTypes: [] as string[],
+    productTypes: ['Web App', 'Interactive Dashboard'] as string[],
     whatProductDoes: '',
     targetUsers: '',
     problemSolved: '',
     hasWireframes: 'Idea stage — need wireframes',
-    hasDesignSystem: 'Need new design system',
+    hasDesignSystem: 'Need complete new Figma design system',
     mainFeatures: '',
-    screenCount: '5–12 screens',
-    needsAuthOrPayments: [] as string[],
+    screenCount: '8–15 screens',
+    needsAuthOrPayments: ['User Auth / Login', 'Stripe / Payments', 'Analytics Charts'] as string[],
     alsoNeedDevelopment: 'Yes, want full design + build',
   });
 
   // 06 Web Design Form State
   const [webDesignState, setWebDesignState] = useState({
-    websiteTypes: [] as string[],
+    websiteTypes: ['Creative Studio / Portfolio', 'Business Flagship'] as string[],
     purposeGoal: '',
     targetAudience: '',
-    pagesRequired: '3–6 pages',
+    pagesRequired: '4–6 pages',
     existingContentStatus: 'Have copy and rough images',
-    visualDirections: [] as string[],
-    functionalitiesNeeded: [] as string[],
+    visualDirections: ['Editorial Luxury', 'Futuristic 3D', 'Smooth Scroll Choreography'] as string[],
+    functionalitiesNeeded: ['3D Canvas / WebGL', 'Custom Micro-Interactions', 'CMS Dynamic Blog/Work'] as string[],
     responsiveTargets: ['Desktop', 'Tablet', 'Mobile'],
   });
 
   // 07 Web Development Form State
   const [webDevState, setWebDevState] = useState({
-    projectType: [] as string[],
-    currentStatus: 'Design ready in Figma',
-    technologyPreferences: [] as string[],
-    backendDatabaseNeeds: '',
+    projectType: ['Custom Web Application', 'Interactive WebGL / 3D Experience'] as string[],
+    currentStatus: 'Figma design ready to build',
+    technologyPreferences: ['React / Next.js', 'TypeScript', 'Tailwind CSS', 'Three.js / WebGL', 'Framer Motion Physics'] as string[],
+    backendDatabaseNeeds: 'Supabase / Headless CMS',
     requiredFeatures: '',
-    needsUIUX: 'Already have completed UI/UX',
+    needsUIUX: 'Already have completed UI/UX in Figma',
   });
 
   const serviceTabs: { id: ServiceKey; number: string; title: string; icon: React.ReactNode; color: string }[] = [
@@ -166,7 +280,8 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
     setSelectedService(id);
     setCurrentStep(1);
     setIsSubmitted(false);
-    setErrorMsg('');
+    setSubmissionError('');
+    setStepError('');
   };
 
   const toggleArrayItem = (list: string[], item: string, setter: (val: string[]) => void) => {
@@ -179,42 +294,175 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
   const totalSteps = 4;
 
-  const handleNextStep = () => {
-    setErrorMsg('');
-    if (currentStep === 1) {
-      // Basic check
-      if (selectedService === 'logo-design' && logoState.logoTypes.length === 0) {
-        setErrorMsg('Please select at least one preferred logo type.');
-        return;
-      }
+  // Real-time client-side email validator
+  const validateEmail = (val: string): boolean => {
+    const trimmed = (val || '').trim();
+    if (!trimmed) {
+      setEmailError('Email address is required.');
+      return false;
     }
-    if (currentStep === totalSteps - 1) {
-      if (!contact.name || !contact.email) {
-        setErrorMsg('Please provide your name and email address.');
+    if (trimmed.includes(' ')) {
+      setEmailError('Email cannot contain spaces.');
+      return false;
+    }
+    if (!EMAIL_REGEX.test(trimmed)) {
+      setEmailError('Please enter a valid email address.');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  // Real-time client-side phone validator
+  const validatePhone = (val: string): boolean => {
+    const digitsOnly = (val || '').replace(/\D/g, '');
+    if (!digitsOnly) {
+      setPhoneError('Phone number is required.');
+      return false;
+    }
+    if (digitsOnly.length < 6 || digitsOnly.length > 15) {
+      setPhoneError('Please enter a valid phone number (at least 6-10 digits).');
+      return false;
+    }
+    setPhoneError('');
+    return true;
+  };
+
+  // Real-time client-side name validator
+  const validateName = (val: string): boolean => {
+    const trimmed = (val || '').trim();
+    if (!trimmed) {
+      setNameError('Full name is required.');
+      return false;
+    }
+    if (trimmed.length < 2) {
+      setNameError('Please enter your full name (at least 2 characters).');
+      return false;
+    }
+    setNameError('');
+    return true;
+  };
+
+  const handleNextStep = () => {
+    setStepError('');
+    if (currentStep === 1) {
+      if (selectedService === 'logo-design' && logoState.logoTypes.length === 0) {
+        setStepError('Please select at least one preferred logo type.');
         return;
       }
-      if (!contact.email.includes('@')) {
-        setErrorMsg('Please enter a valid email address.');
+      if (selectedService === 'graphic-design' && graphicState.designItemTypes.length === 0) {
+        setStepError('Please select at least one design item.');
+        return;
+      }
+      if (selectedService === 'apparel' && apparelState.products.length === 0) {
+        setStepError('Please select at least one garment product.');
+        return;
+      }
+      if (selectedService === 'ui-ux' && uiuxState.productTypes.length === 0) {
+        setStepError('Please select at least one product type.');
+        return;
+      }
+      if (selectedService === 'web-design' && webDesignState.websiteTypes.length === 0) {
+        setStepError('Please select at least one website type.');
+        return;
+      }
+      if (selectedService === 'web-development' && webDevState.projectType.length === 0) {
+        setStepError('Please select at least one development project type.');
         return;
       }
     }
     setCurrentStep((s) => Math.min(totalSteps, s + 1));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Get service-specific question data bundle
+  const getServiceDataBundle = () => {
+    switch (selectedService) {
+      case 'logo-design':
+        return logoState;
+      case 'branding':
+        return brandingState;
+      case 'graphic-design':
+        return graphicState;
+      case 'apparel':
+        return apparelState;
+      case 'ui-ux':
+        return uiuxState;
+      case 'web-design':
+        return webDesignState;
+      case 'web-development':
+        return webDevState;
+      default:
+        return {};
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contact.name || !contact.email) {
-      setErrorMsg('Please enter your name and email address.');
+    setSubmissionError('');
+
+    const isNameValid = validateName(contact.name);
+    const isEmailValid = validateEmail(contact.email);
+    const isPhoneValid = validatePhone(contact.phone);
+
+    if (!isNameValid || !isEmailValid || !isPhoneValid) {
+      setStepError('Please fill in all required contact fields accurately.');
       return;
     }
-    setIsSubmitted(true);
-    confetti({
-      particleCount: 110,
-      spread: 80,
-      origin: { y: 0.6 },
-      colors: ['#A855F7', '#60A5FA', '#38BDF8', '#F472B6', '#10B981'],
-    });
+
+    setIsSubmitting(true);
+
+    const fullPhone = `${contact.countryCode} ${contact.phone.trim()}`;
+    const activeServiceInfo = SERVICE_TITLES[selectedService];
+
+    const payload = {
+      _hp: honeypot, // Honeypot field
+      name: contact.name.trim(),
+      email: contact.email.trim(),
+      phone: fullPhone,
+      company: contact.brandOrCompany.trim(),
+      serviceName: activeServiceInfo.title.replace("LET'S ", '').replace('.', ''),
+      serviceKey: selectedService,
+      serviceData: getServiceDataBundle(),
+      meetingPreference: contact.meetingPreference,
+      preferredDate: contact.preferredDate,
+      preferredTime: contact.preferredTime,
+      timezone: contact.timezone,
+      referenceLinks: contact.referenceLinks,
+      budget: contact.budget,
+      deadline: contact.deadline,
+    };
+
+    try {
+      const response = await fetch('/api/consultation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Server rejected consultation request');
+      }
+
+      setIsSubmitted(true);
+      confetti({
+        particleCount: 110,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#A855F7', '#60A5FA', '#38BDF8', '#F472B6', '#10B981'],
+      });
+    } catch (err) {
+      console.error('[Consultation Submission Error]:', err);
+      setSubmissionError('Something went wrong while sending your request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const currentServiceMeta = SERVICE_TITLES[selectedService];
 
   return (
     <section id="consultation" className="relative w-full py-24 sm:py-36 px-4 sm:px-8 bg-[#FAF9F6] border-b border-avora-border">
@@ -243,10 +491,11 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => handleSelectServiceTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-mono font-medium transition-all ${
                   isActive
-                    ? 'bg-avora-charcoal text-white shadow-md'
+                    ? 'bg-avora-charcoal text-white shadow-md scale-[1.02]'
                     : 'bg-white text-avora-charcoal hover:bg-avora-ivory border border-avora-border'
                 }`}
               >
@@ -260,30 +509,48 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
         {/* Main Personalized Consultation Card */}
         <div className="max-w-4xl bg-white rounded-3xl border border-avora-border shadow-xl p-6 sm:p-12 relative overflow-hidden">
+          {/* Subtle Service-Specific Background Visual Accent */}
+          <div className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-20 -mr-20 -mt-20"
+               style={{ backgroundColor: currentServiceMeta.accent }} />
+
           {!isSubmitted ? (
             <div>
-              {/* Form Title & Progress */}
-              <div className="mb-8 pb-6 border-b border-avora-border-light">
+              {/* Form Title & Progress Indicator */}
+              <div className="mb-8 pb-6 border-b border-avora-border-light relative z-10">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-avora-muted mb-2">
-                  <span className="uppercase tracking-wider font-semibold text-avora-charcoal">
+                  <span className="uppercase tracking-wider font-semibold text-avora-charcoal flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: currentServiceMeta.accent }} />
                     STEP 0{currentStep} OF 0{totalSteps} — {
-                      currentStep === 1 ? 'Scope & Direction' :
-                      currentStep === 2 ? 'Specific Criteria' :
-                      currentStep === 3 ? 'Project & Timeline' : 'Your Contact Details'
+                      currentStep === 1 ? 'Scope & Discipline Direction' :
+                      currentStep === 2 ? 'Specific Criteria & Specifications' :
+                      currentStep === 3 ? 'Logistics & Meeting Preference' : 'Customer Coordinates'
                     }
                   </span>
                   <span>{Math.round((currentStep / totalSteps) * 100)}% COMPLETE</span>
                 </div>
                 <div className="w-full h-1 bg-avora-border rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-avora-charcoal rounded-full"
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: currentServiceMeta.accent }}
                     animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
                     transition={{ duration: 0.3 }}
                   />
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
+                {/* Honeypot Spam Protection (Hidden from humans) */}
+                <input
+                  type="text"
+                  name="_hp"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ display: 'none', position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+                  aria-hidden="true"
+                />
+
                 <AnimatePresence mode="wait">
                   {/* ======================================================== */}
                   {/* FORM 01: LOGO DESIGN (LET'S DESIGN YOUR LOGO) */}
@@ -421,34 +688,12 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                         <div className="space-y-4">
                           <label className="text-xs font-mono uppercase text-avora-muted block">Describe Your Vision / Brand Purpose</label>
                           <textarea
-                            rows={4}
+                            rows={3}
                             placeholder="What does your brand stand for? What feelings should the logo evoke in a viewer?"
                             value={logoState.brandDescription}
                             onChange={(e) => setLogoState({ ...logoState, brandDescription: e.target.value })}
                             className="w-full p-3.5 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm text-avora-charcoal focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
                           />
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Target Timeline</label>
-                              <input
-                                type="text"
-                                placeholder="e.g. 2–3 weeks"
-                                value={contact.deadline}
-                                onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                                className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm text-avora-charcoal focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Reference Moodboard / Links</label>
-                              <input
-                                type="text"
-                                placeholder="Pinterest, Figma, or Dropbox link"
-                                value={contact.referenceLinks}
-                                onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                                className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm text-avora-charcoal focus:outline-none focus:ring-2 focus:ring-purple-500 font-sans"
-                              />
-                            </div>
-                          </div>
                         </div>
                       )}
                     </motion.div>
@@ -564,23 +809,6 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm text-avora-charcoal font-sans"
                             />
                           </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              type="text"
-                              placeholder="Preferred timeline (e.g. 4–6 weeks)"
-                              value={contact.deadline}
-                              onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Inspiration / Reference URLs"
-                              value={contact.referenceLinks}
-                              onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                          </div>
                         </div>
                       )}
                     </motion.div>
@@ -641,7 +869,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Dimensions / Aspect Ratios</label>
+                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Dimensions / Formats</label>
                               <input
                                 type="text"
                                 placeholder="e.g. A1 print, 9:16 Instagram, 16:9 screen"
@@ -669,27 +897,11 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                           <div>
                             <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Content / Copy / Text Elements</label>
                             <textarea
-                              rows={4}
+                              rows={3}
                               placeholder="Paste headline, body text, required dates or logos to include..."
                               value={graphicState.contentCopy}
                               onChange={(e) => setGraphicState({ ...graphicState, contentCopy: e.target.value })}
                               className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              type="text"
-                              placeholder="Deadline"
-                              value={contact.deadline}
-                              onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                            <input
-                              type="text"
-                              placeholder="References / Pinterest Link"
-                              value={contact.referenceLinks}
-                              onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
                             />
                           </div>
                         </div>
@@ -779,10 +991,10 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                             <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Garment Color / Silhouette</label>
+                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Garment Silhouette / Specs</label>
                               <input
                                 type="text"
-                                placeholder="e.g. Faded black, vintage stone, 300gsm boxy fit"
+                                placeholder="e.g. Faded black, 300gsm boxy fit"
                                 value={apparelState.garmentColor}
                                 onChange={(e) => setApparelState({ ...apparelState, garmentColor: e.target.value })}
                                 className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
@@ -792,7 +1004,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                               <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Estimated Production Volume</label>
                               <input
                                 type="text"
-                                placeholder="e.g. 50 pcs, 250 pcs, or design-only"
+                                placeholder="e.g. 100 pcs, 300 pcs, or design-only"
                                 value={apparelState.quantity}
                                 onChange={(e) => setApparelState({ ...apparelState, quantity: e.target.value })}
                                 className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
@@ -807,27 +1019,11 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                           <label className="text-xs font-mono uppercase text-avora-muted block">Moodboard & Artwork References</label>
                           <input
                             type="text"
-                            placeholder="Drop a link to your reference images, Dropbox or Pinterest..."
+                            placeholder="Link to your reference images, Dropbox or Pinterest..."
                             value={contact.referenceLinks}
                             onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
                             className="w-full p-3.5 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
                           />
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              type="text"
-                              placeholder="Target Drop Date / Deadline"
-                              value={contact.deadline}
-                              onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Estimated Budget"
-                              value={contact.budget}
-                              onChange={(e) => setContact({ ...contact, budget: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                          </div>
                         </div>
                       )}
                     </motion.div>
@@ -872,10 +1068,10 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                           </div>
 
                           <div>
-                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">What does the product do & who uses it?</label>
+                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">What problem does this product solve?</label>
                             <textarea
                               rows={3}
-                              placeholder="Describe the core problem this product solves for its users..."
+                              placeholder="Describe what the product does and who will use it..."
                               value={uiuxState.whatProductDoes}
                               onChange={(e) => setUiuxState({ ...uiuxState, whatProductDoes: e.target.value })}
                               className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
@@ -915,7 +1111,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                           </div>
 
                           <div>
-                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Main Functionalities</label>
+                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Core Functionality Required</label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                               {['User Auth / Login', 'Stripe / Payments', 'Analytics Charts', 'Admin CMS', 'Multi-tenant', 'Notifications', 'Search / Filtering', 'Mobile Gestures'].map((f) => {
                                 const sel = uiuxState.needsAuthOrPayments.includes(f);
@@ -955,23 +1151,6 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                                 </button>
                               ))}
                             </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                            <input
-                              type="text"
-                              placeholder="Target Launch Date"
-                              value={contact.deadline}
-                              onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Competitor / Benchmark Links"
-                              value={contact.referenceLinks}
-                              onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
                           </div>
                         </div>
                       )}
@@ -1020,7 +1199,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                             <label className="text-xs font-mono uppercase text-avora-muted block mb-1">What should the website achieve?</label>
                             <input
                               type="text"
-                              placeholder="e.g. Elevate brand prestige, convert visitors into high-ticket clients, launch new collection"
+                              placeholder="e.g. Elevate brand prestige, convert visitors, launch new venture"
                               value={webDesignState.purposeGoal}
                               onChange={(e) => setWebDesignState({ ...webDesignState, purposeGoal: e.target.value })}
                               className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
@@ -1031,7 +1210,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
                       {currentStep === 2 && (
                         <div className="space-y-4">
-                          <label className="text-xs font-mono uppercase text-avora-muted block">Visual Direction & Vibe</label>
+                          <label className="text-xs font-mono uppercase text-avora-muted block">Visual Direction & Tone</label>
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             {['Minimal & Clean', 'Editorial Luxury', 'Futuristic 3D', 'High-Contrast Bold', 'Organic / Earthy', 'Dark Mode Cinematic', 'Interactive Kinetic', 'Experimental'].map((v) => {
                               const sel = webDesignState.visualDirections.includes(v);
@@ -1074,27 +1253,15 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
                       {currentStep === 3 && (
                         <div className="space-y-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Target Launch Date</label>
-                              <input
-                                type="text"
-                                placeholder="e.g. End of next month"
-                                value={contact.deadline}
-                                onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                                className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Inspiration / Benchmark Websites</label>
-                              <input
-                                type="text"
-                                placeholder="URLs of websites you love"
-                                value={contact.referenceLinks}
-                                onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                                className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                              />
-                            </div>
+                          <div>
+                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Inspiration / Benchmark Websites</label>
+                            <input
+                              type="text"
+                              placeholder="URLs of websites you find inspiring..."
+                              value={contact.referenceLinks}
+                              onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
+                              className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
+                            />
                           </div>
                         </div>
                       )}
@@ -1185,7 +1352,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                             <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Describe Required Functionality</label>
                             <textarea
                               rows={3}
-                              placeholder="Key APIs, third-party services, performance goals (e.g. 120Hz smoothness, 99 Lighthouse)..."
+                              placeholder="Key APIs, third-party integrations, 120Hz performance targets..."
                               value={webDevState.requiredFeatures}
                               onChange={(e) => setWebDevState({ ...webDevState, requiredFeatures: e.target.value })}
                               className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
@@ -1196,20 +1363,14 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
 
                       {currentStep === 3 && (
                         <div className="space-y-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Figma / GitHub Repository Link</label>
                             <input
                               type="text"
-                              placeholder="Target Deployment Date"
-                              value={contact.deadline}
-                              onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Figma / GitHub repo link if ready"
+                              placeholder="https://figma.com/... or https://github.com/..."
                               value={contact.referenceLinks}
                               onChange={(e) => setContact({ ...contact, referenceLinks: e.target.value })}
-                              className="p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
+                              className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
                             />
                           </div>
                         </div>
@@ -1218,55 +1379,46 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                   )}
 
                   {/* ======================================================== */}
-                  {/* STEP 4: CONTACT & REVIEW (SHARED STEP 4) */}
+                  {/* STEP 3: LOGISTICS & MEETING PREFERENCES */}
                   {/* ======================================================== */}
-                  {currentStep === 4 && (
-                    <motion.div
-                      key="step-contact"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      className="space-y-5"
-                    >
-                      <div>
-                        <span className="text-xs font-mono text-purple-600 font-semibold tracking-wider uppercase">FINAL STEP // DIRECT COORDINATES</span>
-                        <h3 className="font-serif text-3xl font-bold text-avora-charcoal mt-1">WHERE SHOULD I RESPOND?</h3>
-                        <p className="text-xs font-mono text-avora-muted mt-1">
-                          You will receive a tailored creative proposal and roadmap within 24–48 hours.
-                        </p>
+                  {currentStep === 3 && (
+                    <div className="pt-6 border-t border-avora-border-light space-y-4">
+                      <h4 className="text-xs font-mono uppercase tracking-widest text-avora-muted">Meeting Preference & Logistics</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {['Video Call (30-min)', 'Audio Call', 'Chat / Message', 'Email Roadmap', 'No Meeting Yet'].map((mode) => (
+                          <button
+                            key={mode}
+                            type="button"
+                            onClick={() => setContact({ ...contact, meetingPreference: mode })}
+                            className={`p-2.5 rounded-xl text-center text-xs font-mono border transition-all ${
+                              contact.meetingPreference === mode
+                                ? 'bg-avora-charcoal text-white font-semibold'
+                                : 'bg-[#FAF9F6] text-avora-charcoal border-avora-border hover:bg-white'
+                            }`}
+                          >
+                            {mode}
+                          </button>
+                        ))}
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                         <div>
-                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Your Name *</label>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Target Deadline</label>
                           <input
                             type="text"
-                            required
-                            placeholder="Julian Vance"
-                            value={contact.name}
-                            onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                            className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
+                            placeholder="e.g. 3–4 Weeks"
+                            value={contact.deadline}
+                            onChange={(e) => setContact({ ...contact, deadline: e.target.value })}
+                            className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-xs font-mono"
                           />
                         </div>
                         <div>
-                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Email Address *</label>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Preferred Date (Optional)</label>
                           <input
-                            type="email"
-                            required
-                            placeholder="julian@venture.com"
-                            value={contact.email}
-                            onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                            className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1">Brand / Studio Name</label>
-                          <input
-                            type="text"
-                            placeholder="Vance Atelier"
-                            value={contact.brandOrCompany}
-                            onChange={(e) => setContact({ ...contact, brandOrCompany: e.target.value })}
-                            className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans"
+                            type="date"
+                            value={contact.preferredDate}
+                            onChange={(e) => setContact({ ...contact, preferredDate: e.target.value })}
+                            className="w-full p-3 rounded-xl border border-avora-border bg-[#FAF9F6] text-xs font-mono"
                           />
                         </div>
                         <div>
@@ -1284,19 +1436,179 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                           </select>
                         </div>
                       </div>
+                    </div>
+                  )}
 
-                      {/* Summary Banner */}
-                      <div className="p-4 rounded-2xl bg-avora-ivory border border-avora-border text-xs font-mono text-avora-muted space-y-1">
-                        <div className="flex justify-between">
+                  {/* ======================================================== */}
+                  {/* STEP 4: CUSTOMER COORDINATES (NAME, EMAIL, PHONE, COMPANY) */}
+                  {/* ======================================================== */}
+                  {currentStep === 4 && (
+                    <motion.div
+                      key="step-contact"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-6"
+                    >
+                      <div>
+                        <span className="text-xs font-mono text-purple-600 font-semibold tracking-wider uppercase">
+                          FINAL STEP // CUSTOMER COORDINATES
+                        </span>
+                        <h3 className="font-serif text-3xl font-bold text-avora-charcoal mt-1">
+                          WHERE SHOULD I RESPOND?
+                        </h3>
+                        <p className="text-xs font-mono text-avora-muted mt-1">
+                          Your coordinates are kept strictly confidential and used solely to coordinate your consultation.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        {/* 1. FULL NAME (Required) */}
+                        <div>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <User className="w-3.5 h-3.5" />
+                              <span>Full Name *</span>
+                            </span>
+                            <span className="text-[10px] text-zinc-400">Required</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Julian Vance"
+                            value={contact.name}
+                            onChange={(e) => {
+                              setContact({ ...contact, name: e.target.value });
+                              validateName(e.target.value);
+                            }}
+                            className={`w-full p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-sans transition-all focus:outline-none focus:ring-2 ${
+                              nameError
+                                ? 'border-rose-300 focus:ring-rose-400'
+                                : 'border-avora-border focus:ring-purple-500'
+                            }`}
+                          />
+                          {nameError && (
+                            <p className="text-[11px] font-mono text-rose-600 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              <span>{nameError}</span>
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 2. EMAIL ADDRESS (Required, type="email", strict client validation) */}
+                        <div>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <Mail className="w-3.5 h-3.5" />
+                              <span>Email Address *</span>
+                            </span>
+                            <span className="text-[10px] text-zinc-400">Required</span>
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            placeholder="you@example.com"
+                            value={contact.email}
+                            onChange={(e) => {
+                              setContact({ ...contact, email: e.target.value });
+                              validateEmail(e.target.value);
+                            }}
+                            className={`w-full p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-sans transition-all focus:outline-none focus:ring-2 ${
+                              emailError
+                                ? 'border-rose-300 focus:ring-rose-400'
+                                : 'border-avora-border focus:ring-purple-500'
+                            }`}
+                          />
+                          {emailError && (
+                            <p className="text-[11px] font-mono text-rose-600 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              <span>{emailError}</span>
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 3. PHONE NUMBER (Required, country code selector + input) */}
+                        <div>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <Phone className="w-3.5 h-3.5" />
+                              <span>Phone Number *</span>
+                            </span>
+                            <span className="text-[10px] text-zinc-400">Required</span>
+                          </label>
+                          <div className="flex gap-2">
+                            {/* Country code selector */}
+                            <select
+                              value={contact.countryCode}
+                              onChange={(e) => setContact({ ...contact, countryCode: e.target.value })}
+                              className="w-32 p-3.5 rounded-xl border border-avora-border bg-[#FAF9F6] text-xs font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              title="Select Country Calling Code"
+                            >
+                              {COUNTRY_CODES.map((c) => (
+                                <option key={c.code + c.name} value={c.code}>
+                                  {c.flag} {c.code}
+                                </option>
+                              ))}
+                            </select>
+
+                            {/* Phone number input */}
+                            <input
+                              type="tel"
+                              required
+                              placeholder="98765 43210"
+                              value={contact.phone}
+                              onChange={(e) => {
+                                setContact({ ...contact, phone: e.target.value });
+                                validatePhone(e.target.value);
+                              }}
+                              className={`flex-1 p-3.5 rounded-xl border bg-[#FAF9F6] text-sm font-mono transition-all focus:outline-none focus:ring-2 ${
+                                phoneError
+                                  ? 'border-rose-300 focus:ring-rose-400'
+                                  : 'border-avora-border focus:ring-purple-500'
+                              }`}
+                            />
+                          </div>
+                          {phoneError && (
+                            <p className="text-[11px] font-mono text-rose-600 mt-1 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" />
+                              <span>{phoneError}</span>
+                            </p>
+                          )}
+                        </div>
+
+                        {/* 4. COMPANY / BRAND (Optional) */}
+                        <div>
+                          <label className="text-xs font-mono uppercase text-avora-muted block mb-1 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <Building className="w-3.5 h-3.5" />
+                              <span>Company / Brand</span>
+                            </span>
+                            <span className="text-[10px] text-zinc-400">Optional</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Vance Atelier Ltd."
+                            value={contact.brandOrCompany}
+                            onChange={(e) => setContact({ ...contact, brandOrCompany: e.target.value })}
+                            className="w-full p-3.5 rounded-xl border border-avora-border bg-[#FAF9F6] text-sm font-sans focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Summary Review Notice (Requirement 08: No visible raw email text) */}
+                      <div className="p-4 rounded-2xl bg-avora-ivory border border-avora-border text-xs font-mono text-avora-muted space-y-1.5">
+                        <div className="flex justify-between items-center">
                           <span>SELECTED DISCIPLINE:</span>
-                          <span className="font-bold text-avora-charcoal uppercase">{selectedService.replace('-', ' ')}</span>
+                          <span className="font-bold text-avora-charcoal uppercase">
+                            {selectedService.replace('-', ' ')}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>FOUNDER DIRECT CONTACT:</span>
-                          <span className="text-avora-charcoal font-semibold">kshaurya0708@gmail.com</span>
+                        <div className="flex justify-between items-center">
+                          <span>ATELIER DISPATCH:</span>
+                          <span className="text-purple-600 font-semibold">Direct Studio Transmission</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>RESPONSE TIME:</span>
+                        <div className="flex justify-between items-center">
+                          <span>ESTIMATED RESPONSE:</span>
                           <span className="text-emerald-600 font-semibold">Within 24–48 Hours</span>
                         </div>
                       </div>
@@ -1304,20 +1616,49 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                   )}
                 </AnimatePresence>
 
-                {/* Error Banner */}
-                {errorMsg && (
-                  <p className="mt-4 text-xs font-mono text-rose-600 bg-rose-50 p-2.5 rounded-lg border border-rose-200">
-                    {errorMsg}
-                  </p>
+                {/* Validation / Step Error Banner */}
+                {stepError && (
+                  <div className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-mono flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{stepError}</span>
+                  </div>
                 )}
 
-                {/* Navigation and CTA Buttons */}
+                {/* Submission Failure Error Banner (Requirement 12) */}
+                {submissionError && (
+                  <div className="mt-4 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-mono space-y-2">
+                    <div className="flex items-center gap-2 font-semibold">
+                      <AlertCircle className="w-4 h-4 text-rose-600" />
+                      <span>{submissionError}</span>
+                    </div>
+                    <div className="flex items-center gap-3 pt-1">
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        className="px-3.5 py-1.5 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors"
+                      >
+                        TRY AGAIN ↗
+                      </button>
+                      <a
+                        href={`mailto:kshaurya0708@gmail.com?subject=New AVORA Consultation — ${encodeURIComponent(currentServiceMeta.title)}&body=Name: ${encodeURIComponent(contact.name)}%0AEmail: ${encodeURIComponent(contact.email)}%0APhone: ${encodeURIComponent(contact.countryCode + ' ' + contact.phone)}%0ACompany: ${encodeURIComponent(contact.brandOrCompany)}`}
+                        className="text-rose-700 underline hover:text-rose-900"
+                      >
+                        Send via Email Client ↗
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* Form Navigation and Submission Buttons */}
                 <div className="mt-8 pt-6 border-t border-avora-border-light flex items-center justify-between">
                   {currentStep > 1 ? (
                     <button
                       type="button"
-                      onClick={() => setCurrentStep((s) => s - 1)}
-                      className="px-4 py-2.5 rounded-xl border border-avora-border bg-white text-xs font-sans font-medium text-avora-charcoal hover:bg-avora-ivory flex items-center gap-1.5"
+                      onClick={() => {
+                        setStepError('');
+                        setCurrentStep((s) => s - 1);
+                      }}
+                      className="px-4 py-2.5 rounded-xl border border-avora-border bg-white text-xs font-sans font-medium text-avora-charcoal hover:bg-avora-ivory flex items-center gap-1.5 transition-colors"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       <span>Back</span>
@@ -1330,7 +1671,7 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                     <button
                       type="button"
                       onClick={handleNextStep}
-                      className="px-6 py-3 rounded-xl bg-avora-charcoal text-white text-xs font-sans font-semibold tracking-wide hover:bg-black flex items-center gap-2 shadow"
+                      className="px-6 py-3 rounded-xl bg-avora-charcoal text-white text-xs font-sans font-semibold tracking-wide hover:bg-black flex items-center gap-2 shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0"
                     >
                       <span>Continue</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -1338,52 +1679,58 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
                   ) : (
                     <button
                       type="submit"
-                      className="px-8 py-3.5 rounded-xl bg-avora-charcoal text-white text-xs font-sans font-bold tracking-wider uppercase hover:bg-black flex items-center gap-2 shadow-lg hover:shadow-xl"
+                      disabled={isSubmitting}
+                      className={`px-8 py-3.5 rounded-xl text-white text-xs font-sans font-bold tracking-wider uppercase flex items-center gap-2 shadow-lg transition-all ${
+                        isSubmitting
+                          ? 'bg-zinc-500 cursor-not-allowed opacity-80'
+                          : 'bg-avora-charcoal hover:bg-black hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0'
+                      }`}
                     >
-                      <Send className="w-4 h-4" />
-                      <span>
-                        {selectedService === 'logo-design' && 'START LOGO CONSULTATION ↗'}
-                        {selectedService === 'branding' && 'START BRAND CONSULTATION ↗'}
-                        {selectedService === 'graphic-design' && 'START GRAPHIC CONSULTATION ↗'}
-                        {selectedService === 'apparel' && 'START APPAREL CONSULTATION ↗'}
-                        {selectedService === 'ui-ux' && 'START UI/UX CONSULTATION ↗'}
-                        {selectedService === 'web-design' && 'START WEB CONSULTATION ↗'}
-                        {selectedService === 'web-development' && 'START DEVELOPMENT CONSULTATION ↗'}
-                      </span>
+                      {isSubmitting ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Transmitting Request...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>{currentServiceMeta.cta}</span>
+                        </>
+                      )}
                     </button>
                   )}
                 </div>
               </form>
             </div>
           ) : (
-            /* Success Confirmation */
+            /* Success Confirmation (Requirement 11) */
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="py-12 text-center space-y-4"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
+                <Check className="w-8 h-8" />
               </div>
               <h3 className="font-serif text-3xl font-bold text-avora-charcoal">
-                CONSULTATION INQUIRY RECEIVED.
+                CONSULTATION REQUESTED.
               </h3>
-              <p className="text-sm font-sans text-avora-muted max-w-md mx-auto leading-relaxed">
-                Thank you, <strong className="text-avora-charcoal">{contact.name}</strong>. Your customized{' '}
-                <strong className="text-avora-charcoal">{selectedService.replace('-', ' ').toUpperCase()}</strong> consultation request has been delivered to AVORA founder Kumar Shaurya.
+              <p className="text-sm font-sans text-avora-charcoal/90 max-w-md mx-auto leading-relaxed">
+                Thank you. Your consultation request has been received.
               </p>
-              <p className="text-xs font-mono text-avora-muted">
-                A structured proposal and discussion schedule will be sent to <strong>{contact.email}</strong> within 24–48 hours.
+              <p className="text-xs font-mono text-avora-muted max-w-md mx-auto leading-relaxed">
+                We'll review your details and get back to you using the contact information you provided.
               </p>
-              <div className="pt-4">
+              <div className="pt-6 flex justify-center gap-4">
                 <button
+                  type="button"
                   onClick={() => {
                     setIsSubmitted(false);
                     setCurrentStep(1);
                   }}
-                  className="text-xs font-mono text-purple-600 underline hover:text-black"
+                  className="px-5 py-2.5 rounded-xl border border-avora-border bg-[#FAF9F6] text-xs font-mono text-avora-charcoal hover:bg-white transition-colors"
                 >
-                  Configure another consultation
+                  Configure Another Consultation
                 </button>
               </div>
             </motion.div>

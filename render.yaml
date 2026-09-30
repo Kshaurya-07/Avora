@@ -1,10 +1,15 @@
 services:
   - type: web
     name: avora
-    runtime: static
+    runtime: node
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    startCommand: npm start
+    envVars:
+      - key: CONSULTATION_RECEIVER
+        value: kshaurya0708@gmail.com
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: onboarding@resend.dev
+      - key: NODE_ENV
+        value: production

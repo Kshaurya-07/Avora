@@ -67,7 +67,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     },
     {
       id: 'email',
-      label: 'Direct Email (kshaurya0708@gmail.com)',
+      label: 'Email AVORA ↗',
       category: 'Contact',
       icon: <Mail className="w-4 h-4 text-purple-600" />,
       action: () => {

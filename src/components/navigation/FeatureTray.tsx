@@ -212,8 +212,8 @@ export const FeatureTray: React.FC<FeatureTrayProps> = ({
                       <Mail className="w-3.5 h-3.5 text-avora-lavender" />
                       <span>Email AVORA</span>
                     </div>
-                    <span className="text-[10px] font-mono text-avora-muted group-hover:text-black">
-                      kshaurya0708@gmail.com
+                    <span className="text-xs font-mono font-semibold text-purple-600 group-hover:underline">
+                      Email AVORA ↗
                     </span>
                   </a>
                 </div>

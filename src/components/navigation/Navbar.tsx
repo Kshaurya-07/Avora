@@ -216,9 +216,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Email direct link */}
               <a
                 href="mailto:kshaurya0708@gmail.com"
-                className="block text-center text-xs font-mono text-avora-muted hover:text-black py-2"
+                className="block text-center text-xs font-mono text-purple-600 hover:text-black py-2 font-semibold"
               >
-                kshaurya0708@gmail.com
+                Email AVORA ↗
               </a>
             </div>
           </motion.div>

@@ -16,8 +16,10 @@ interface VisualServicesProps {
 
 export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsultation }) => {
   const [selectedServiceId, setSelectedServiceId] = useState<string>('logo-design');
+  const [hoveredServiceId, setHoveredServiceId] = useState<string | null>(null);
 
-  const currentService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
+  const activeServiceId = hoveredServiceId || selectedServiceId;
+  const currentService = SERVICES.find((s) => s.id === activeServiceId) || SERVICES[0];
 
   const handleStartConsultation = (serviceId: string) => {
     if (onSelectConsultation) {
@@ -30,8 +32,63 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsulta
     }
   };
 
-  const renderVisualStage = () => {
-    switch (selectedServiceId) {
+  const getServiceHoverReaction = (serviceId: string) => {
+    switch (serviceId) {
+      case 'logo-design':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-purple-700 bg-purple-50/80 px-2 py-0.5 rounded border border-purple-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping" />
+            <span>📐 Logo Geometry & Construction Grid</span>
+          </div>
+        );
+      case 'branding':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-200">
+            <span className="inline-flex gap-1">
+              <span className="w-2 h-2 rounded-full bg-[#18181B]" />
+              <span className="w-2 h-2 rounded-full bg-[#C084FC]" />
+              <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
+            </span>
+            <span>🎨 Typography & Color Swatches</span>
+          </div>
+        );
+      case 'graphic-design':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-pink-700 bg-pink-50/80 px-2 py-0.5 rounded border border-pink-200">
+            <span>▯ Editorial Poster 3:4 Ratio Grid</span>
+          </div>
+        );
+      case 'apparel':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded border border-amber-200">
+            <span>👕 Garment Silhouette & Silkscreen Specs</span>
+          </div>
+        );
+      case 'ui-ux':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-700 bg-cyan-50/80 px-2 py-0.5 rounded border border-cyan-200">
+            <span>📱 Responsive Design Tokens & Wireframes</span>
+          </div>
+        );
+      case 'web-design':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-indigo-700 bg-indigo-50/80 px-2 py-0.5 rounded border border-indigo-200">
+            <span>◫ 1440px Fluid Viewport & Interaction</span>
+          </div>
+        );
+      case 'web-development':
+        return (
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded border border-emerald-200">
+            <span>&lt;Code /&gt; 120Hz React / WebGL Architecture</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderVisualStage = (id: string) => {
+    switch (id) {
       case 'logo-design':
         return <LogoDesignMockup />;
       case 'branding':
@@ -67,7 +124,7 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsulta
           <div className="max-w-md text-sm sm:text-base font-sans text-avora-muted">
             <p className="font-medium text-avora-charcoal">Design, develop and everything in between.</p>
             <p className="mt-1">
-              Interactive demonstrations showing how AVORA approaches form, systems, garments, and functional code. Select a discipline below to transform the studio stage.
+              Hover or select a discipline below to transform the studio stage with live geometry, swatches, blueprints, and responsive interfaces.
             </p>
           </div>
         </div>
@@ -75,23 +132,32 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsulta
         {/* 2-Column Split: Discipline Selector (Left) & Dynamic Visual Stage (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column: 7 Disciplines Interactive List */}
-          <div className="lg:col-span-5 flex flex-col space-y-2">
+          <div
+            className="lg:col-span-5 flex flex-col space-y-2"
+            onMouseLeave={() => setHoveredServiceId(null)}
+          >
             {SERVICES.map((service) => {
               const isSelected = selectedServiceId === service.id;
+              const isHovered = hoveredServiceId === service.id;
+              const isCurrentActive = activeServiceId === service.id;
+
               return (
                 <button
                   key={service.id}
                   onClick={() => setSelectedServiceId(service.id)}
+                  onMouseEnter={() => setHoveredServiceId(service.id)}
                   className={`group relative w-full text-left p-5 sm:p-6 rounded-2xl transition-all duration-300 border ${
                     isSelected
-                      ? 'bg-white border-avora-border shadow-md translate-x-1'
+                      ? 'bg-white border-purple-300 shadow-md translate-x-1 ring-1 ring-purple-100'
+                      : isHovered
+                      ? 'bg-white/90 border-avora-border shadow-xs translate-x-0.5'
                       : 'bg-transparent border-transparent hover:bg-white/60 hover:border-avora-border-light'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-baseline gap-4">
                       <span className={`text-xs font-mono font-bold tracking-wider ${
-                        isSelected ? 'text-avora-lavender' : 'text-avora-muted'
+                        isCurrentActive ? 'text-avora-lavender' : 'text-avora-muted'
                       }`}>
                         {service.number}
                       </span>
@@ -102,6 +168,17 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsulta
                         <p className="text-xs font-sans text-avora-muted mt-1">
                           {service.shortTagline}
                         </p>
+
+                        {/* Interactive Visual Reaction Cue on Hover / Active */}
+                        {(isHovered || isSelected) && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 3 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-2.5"
+                          >
+                            {getServiceHoverReaction(service.id)}
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                     <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${
@@ -152,17 +229,32 @@ export const VisualServices: React.FC<VisualServicesProps> = ({ onSelectConsulta
           </div>
 
           {/* Right Column: Dynamic Visual Stage */}
-          <div className="lg:col-span-7 sticky top-28">
+          <div className="lg:col-span-7 sticky top-28 space-y-3">
+            {/* Visual Stage Context Indicator */}
+            <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white/70 border border-avora-border-light text-[11px] font-mono text-avora-muted backdrop-blur-xs">
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                <span className="font-semibold text-avora-charcoal uppercase tracking-wider">
+                  {hoveredServiceId && hoveredServiceId !== selectedServiceId
+                    ? `PREVIEWING // ${currentService.name}`
+                    : `ACTIVE DISCIPLINE // ${currentService.name}`}
+                </span>
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-avora-muted hidden sm:inline">
+                Interactive Studio Canvas
+              </span>
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.div
-                key={selectedServiceId}
-                initial={{ opacity: 0, scale: 0.97, y: 15 }}
+                key={activeServiceId}
+                initial={{ opacity: 0, scale: 0.98, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97, y: -15 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                exit={{ opacity: 0, scale: 0.98, y: -10 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
                 className="w-full min-h-[500px]"
               >
-                {renderVisualStage()}
+                {renderVisualStage(activeServiceId)}
               </motion.div>
             </AnimatePresence>
           </div>

@@ -33,10 +33,10 @@ export const GlassCrystal: React.FC = () => {
       innerRef.current.rotation.y = t * 0.5;
     }
 
-    // Follow pointer with subtle iridescent light
+    // Follow pointer with smooth lerped iridescent light
     if (lightRef.current) {
-      lightRef.current.position.x = pointer.x * 4;
-      lightRef.current.position.y = pointer.y * 4;
+      lightRef.current.position.x = THREE.MathUtils.lerp(lightRef.current.position.x, pointer.x * 4, 0.06);
+      lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, pointer.y * 4, 0.06);
     }
   });
 
