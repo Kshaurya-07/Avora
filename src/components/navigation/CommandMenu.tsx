@@ -12,6 +12,7 @@ interface CommandItem {
 
 interface CommandMenuProps {
   isOpen: boolean;
+  onOpen?: () => void;
   onClose: () => void;
   onNavigate: (sectionId: string) => void;
   onNavigateAbout?: () => void;
@@ -19,6 +20,7 @@ interface CommandMenuProps {
 
 export const CommandMenu: React.FC<CommandMenuProps> = ({
   isOpen,
+  onOpen,
   onClose,
   onNavigate,
   onNavigateAbout,
@@ -86,8 +88,12 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        if (isOpen) onClose();
-        else setQuery('');
+        if (isOpen) {
+          onClose();
+        } else if (onOpen) {
+          setQuery('');
+          onOpen();
+        }
       } else if (e.key === 'Escape' && isOpen) {
         onClose();
       }
@@ -95,7 +101,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onOpen, onClose]);
 
   return (
     <AnimatePresence>

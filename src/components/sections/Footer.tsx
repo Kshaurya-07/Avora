@@ -86,13 +86,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onNavigateAbout }) =
           <div className="space-y-3">
             <p className="font-bold text-avora-charcoal uppercase tracking-wider">Disciplines</p>
             <ul className="space-y-2 text-avora-muted">
-              <li>01 Logo Design</li>
-              <li>02 Brand Identity</li>
-              <li>03 Graphic & Editorial</li>
-              <li>04 Apparel & Capsule</li>
-              <li>05 UI/UX & Systems</li>
-              <li>06 Immersive Web Design</li>
-              <li>07 Frontend & WebGL</li>
+              {[
+                '01 Logo Design',
+                '02 Brand Identity',
+                '03 Graphic & Editorial',
+                '04 Apparel & Capsule',
+                '05 UI/UX & Systems',
+                '06 Immersive Web Design',
+                '07 Frontend & WebGL',
+              ].map((disc) => (
+                <li key={disc}>
+                  <button
+                    onClick={() => onNavigate('services')}
+                    className="hover:text-black transition-colors text-left"
+                  >
+                    {disc}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 

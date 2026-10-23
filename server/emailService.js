@@ -75,6 +75,14 @@ export async function handleConsultationRequest(payload, clientIp = '127.0.0.1')
 
   // 2. Rate limiting check
   const now = Date.now();
+  if (rateLimitMap.size > 1000) {
+    for (const [ip, timestamps] of rateLimitMap.entries()) {
+      if (!timestamps.some((t) => now - t < RATE_LIMIT_WINDOW)) {
+        rateLimitMap.delete(ip);
+      }
+    }
+  }
+
   const clientRecords = rateLimitMap.get(clientIp) || [];
   const recentRecords = clientRecords.filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW);
 
@@ -153,6 +161,11 @@ Submission Timestamp: ${new Date().toISOString()}
 Reply-To: ${email}
 `;
 
+  const isUrl = references.startsWith('http://') || references.startsWith('https://');
+  const referenceHtml = isUrl
+    ? `<a href="${sanitize(references)}" style="color:#2563EB;word-break:break-all;" target="_blank" rel="noopener noreferrer">${sanitize(references)}</a>`
+    : `<span>${sanitize(references)}</span>`;
+
   const htmlBody = `
 <!DOCTYPE html>
 <html>
@@ -212,7 +225,7 @@ Reply-To: ${email}
         <tr><td style="padding:4px 0;color:#71717A;">Target Deadline:</td><td style="padding:4px 0;font-weight:600;">${sanitize(deadline)}</td></tr>
         <tr><td style="padding:4px 0;color:#71717A;">Meeting Preference:</td><td style="padding:4px 0;font-weight:600;">${sanitize(meetingPreference)}</td></tr>
         <tr><td style="padding:4px 0;color:#71717A;">Preferred Date & Time:</td><td style="padding:4px 0;">${sanitize(preferredDate)} (${sanitize(preferredTime)}) — ${sanitize(timezone)}</td></tr>
-        <tr><td style="padding:4px 0;color:#71717A;">Reference Links:</td><td style="padding:4px 0;"><a href="${sanitize(references)}" style="color:#2563EB;word-break:break-all;">${sanitize(references)}</a></td></tr>
+        <tr><td style="padding:4px 0;color:#71717A;">Reference Links:</td><td style="padding:4px 0;">${referenceHtml}</td></tr>
       </table>
     </div>
 

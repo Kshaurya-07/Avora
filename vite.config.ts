@@ -8,7 +8,8 @@ function consultationApiPlugin() {
     name: 'consultation-api',
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
-        if (req.url === '/api/consultation' && req.method === 'POST') {
+        const urlPath = req.url ? req.url.split('?')[0].replace(/\/+$/, '') : '';
+        if (urlPath === '/api/consultation' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: any) => {
             body += chunk;
@@ -16,7 +17,8 @@ function consultationApiPlugin() {
           req.on('end', async () => {
             try {
               const payload = JSON.parse(body || '{}');
-              const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+              const forwarded = req.headers['x-forwarded-for'];
+              const clientIp = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '') || req.socket?.remoteAddress || '127.0.0.1';
               const result = await handleConsultationRequest(payload, clientIp);
 
               res.statusCode = result.success ? 200 : result.status || 400;

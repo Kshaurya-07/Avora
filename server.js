@@ -31,24 +31,32 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
 
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+  const hostHeader = req.headers.host || 'localhost';
+  const parsedUrl = new URL(req.url, `http://${hostHeader}`);
   const pathname = parsedUrl.pathname;
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/';
 
   // Handle API: POST /api/consultation
-  if (req.method === 'POST' && pathname === '/api/consultation') {
+  if (req.method === 'POST' && (normalizedPath === '/api/consultation')) {
     let body = '';
+    let isTooLarge = false;
     req.on('data', (chunk) => {
       body += chunk;
       // Safeguard against massive payloads (max 1MB)
-      if (body.length > 1e6) {
-        req.socket.destroy();
+      if (body.length > 1e6 && !isTooLarge) {
+        isTooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'Payload too large.' }));
+        req.destroy();
       }
     });
 
     req.on('end', async () => {
+      if (isTooLarge) return;
       try {
         const payload = JSON.parse(body || '{}');
-        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+        const forwarded = req.headers['x-forwarded-for'];
+        const clientIp = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '') || req.socket.remoteAddress || '127.0.0.1';
 
         const result = await handleConsultationRequest(payload, clientIp);
 

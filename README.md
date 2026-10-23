@@ -3,7 +3,7 @@
 > **"IDEA → DESIGN → EXPERIENCE → DEVELOPMENT"**  
 > **"TURNING IDEAS INTO LIVING DIGITAL EXPERIENCES."**
 
-A luxury editorial, production-quality digital studio experience built for **AVORA** by **Kumar Shaurya**. Uniting brand identity, graphic design, streetwear apparel, product UI/UX design systems, and 120Hz-ready frontend engineering into a single cohesive universe.
+A luxury editorial, production-grade digital studio experience built for **AVORA** by **Kumar Shaurya**. Uniting brand identity architecture, graphic & editorial design, streetwear capsule apparel, product UI/UX design systems, and 120Hz-ready frontend engineering into a single cohesive, high-performance web experience.
 
 [![CI](https://github.com/Kshaurya-07/Avora/actions/workflows/ci.yml/badge.svg)](https://github.com/Kshaurya-07/Avora/actions/workflows/ci.yml)
 [![Live on Render](https://img.shields.io/badge/Render-Deployed-success?logo=render&logoColor=white)](https://avora.onrender.com)
@@ -42,32 +42,32 @@ AVORA structures its capabilities into 7 clearly defined, interactively demonstr
 
 ---
 
-## ✦ Architecture & Upgrades
+## ✦ Architecture & Systems
 
 ### 1. Real Consultation & Project Onboarding Email Pipeline
 - **Backend Route**: `POST /api/consultation`
-- **Delivery Recipient**: Strictly sent to `kshaurya0708@gmail.com`.
+- **Delivery Recipient**: Strictly dispatched to `kshaurya0708@gmail.com`.
 - **Subject Format**: `New AVORA Consultation — [SERVICE NAME]` (e.g. *New AVORA Consultation — Logo Design*).
-- **Reply-To**: Automatically set to the **customer's submitted email address** so clicking "Reply" in your email client responds directly to the client.
-- **Payload Contents**: Full customer contact coordinates (Name, Email, Phone with country code, Company/Brand), complete service-specific answers, meeting preferences, preferred date/time, timezone, and reference links.
-- **Spam Protection & Rate Limiting**: Built-in honeypot bot trap (`_hp`) and IP rate limiting (maximum 5 requests per IP per hour).
+- **Reply-To Configuration**: Automatically set to the **customer's submitted email address** (`reply_to: email`), ensuring when AVORA clicks "Reply", the email client responds directly to the customer.
+- **Payload Contents**: Full customer contact coordinates (Full Name, Validated Email, Phone with country code, Company/Brand), complete service-specific answers, meeting preferences, preferred date/time, timezone, and reference links.
+- **Spam Protection & Rate Limiting**: Built-in honeypot bot trap (`_hp`) and IP rate limiting (maximum 5 requests per IP per hour) with automatic memory pruning.
 - **Server Infrastructure**:
   - **Development**: Synchronously handled in Vite dev middleware (`vite.config.ts`).
   - **Production**: Native Node.js HTTP server (`server.js`) with zero extra runtime dependencies, serving `dist/` and providing SPA fallback routing.
 
-### 2. Live Dynamic Form Validation (Red $\rightarrow$ Green)
-- **Consultation Forms & Project Planner**:
+### 2. Live Dynamic Form Validation (Red → Green)
+- **Consultation Forms (7 Tailored Services) & Project Planner**:
   - **Full Name**: Required (minimum 2 characters).
-  - **Email Address**: Required (`type="email"`, strict regex client validation).
-  - **Phone Number**: Required (searchable 19-country code selector dropdown e.g. `+91`, `+1`, `+44`, `+971`, etc., and phone number validation).
+  - **Email Address**: Required (`type="email"`, strict regex client & server validation).
+  - **Phone Number**: Required (searchable 19-country code selector dropdown e.g. `+91`, `+1`, `+44`, `+971`, etc., and minimum 6-digit validation).
   - **Company / Brand**: Optional.
 - **Dynamic Visual Feedback**:
-  - As soon as a user enters valid credentials, inputs dynamically transition into a verified **green state** (`border-emerald-400 bg-emerald-50/20`) with a **`✓ Valid`** checkmark badge.
-  - Invalid inputs show clear inline errors (`border-rose-300`).
-- **Session State Preservation**: Contact coordinates and step answers are preserved in `sessionStorage` so navigating or switching tabs never wipes client input.
+  - As soon as a user enters valid input, fields dynamically transition into a verified **green state** (`border-emerald-400 bg-emerald-50/20`) with a **`✓ Valid`** checkmark badge.
+  - Invalid inputs display clear inline guidance errors (`border-rose-300`).
+- **Session State Preservation**: Contact coordinates and step answers are preserved during the session so navigating between steps or reviewing inputs never wipes customer data.
 
-### 3. Public Email Text Concealment
-- Raw visible `kshaurya0708@gmail.com` text has been concealed across the entire site.
+### 3. Public Email Address Concealment
+- Raw visible `kshaurya0708@gmail.com` text has been concealed across the entire public interface.
 - Replaced with elegant, clickable **`Email AVORA ↗`** CTAs across the Navbar, Feature Tray, Command Menu, About Page, Footer, and Final CTA while maintaining direct `mailto:kshaurya0708@gmail.com` links.
 
 ### 4. 120Hz-Ready Real 3D WebGL Crystal (`GlassCrystal.tsx`)
@@ -87,6 +87,37 @@ AVORA structures its capabilities into 7 clearly defined, interactively demonstr
 
 ### 7. Creative Control Panel Tray (`FeatureTray.tsx`)
 - Clicking `[ PANEL ]` beside the AVORA logo opens an expandable control panel with direct service shortcuts, consultation launchpads, and email triggers. Full keyboard accessibility (closes on `ESC`).
+
+---
+
+## ✦ Recent Bug Fixes & Stability Polish
+
+The codebase has undergone a comprehensive audit resolving all runtime, UX, and architectural edge cases:
+
+1. **Command Palette (`CommandMenu.tsx`)**:
+   - Resolved keyboard shortcut issue: pressing `⌘K` or `Ctrl+K` when closed now reliably opens the palette via `onOpen()` callback. Pressing it while open or pressing `ESC` closes it.
+2. **Project Planner Synchronization (`ProjectPlanner.tsx`)**:
+   - Added prop synchronization `useEffect`: clicking *"Request a Quote"* on any package in `Packages.tsx` dynamically populates the planner's selected service and resets to step 1.
+3. **Smooth Viewport Cursor Boundary Tracking (`CustomCursor.tsx`)**:
+   - Added window `mouseenter`/`mouseleave` event listeners to fade out custom cursor when exiting browser viewport, preventing frozen cursor artifacts.
+4. **Navigation & Top-Scroll Controller (`App.tsx`)**:
+   - Navigating to `'hero'` cleanly executes `window.scrollTo({ top: 0, behavior: 'smooth' })`.
+   - Inter-page navigation from `/about` back to homepage anchors stabilizes DOM mounting with an optimized 150ms timeout.
+5. **Server Security & IP Extraction (`server.js`)**:
+   - Safe `Host` header fallback (`req.headers.host || 'localhost'`).
+   - Reverse-proxy client IP extraction handling comma-separated `x-forwarded-for` headers for Render and Cloudflare deployments.
+   - Streaming request size limit (1MB ceiling) with proper `413 Payload Too Large` responses protecting against hung sockets.
+   - Normalization of route paths ignoring trailing slashes (`/api/consultation/`).
+6. **Rate Limiting Garbage Collection (`server/emailService.js`)**:
+   - Automatic pruning mechanism cleans up expired timestamps when `rateLimitMap.size > 1000`, preventing in-memory leaks in long-running processes.
+7. **HTML Email Link Rendering (`server/emailService.js`)**:
+   - Validates references input: only wraps text in `<a href="..." target="_blank">` if it starts with `http://` or `https://`. Plain text like `"None provided"` renders safely as text without broken hyperlinks.
+8. **Branding Step 1 Validation (`Consultation.tsx`)**:
+   - Added strict validation for `brandingState.brandName` in Step 1 of the Branding consultation form.
+9. **Interactive Discipline Links (`Footer.tsx`)**:
+   - Converted static discipline items into interactive buttons navigating to the Services section.
+10. **Generative Canvas Mouse Reset (`Playground.tsx`)**:
+    - Added `mouseleave` listener to the generative canvas, resetting `mouse.active = false` so wave perturbations settle smoothly when cursor leaves.
 
 ---
 
@@ -134,7 +165,7 @@ The Vite dev server includes synchronous middleware for `POST /api/consultation`
 npm run build
 npm start
 ```
-The production server (`server.js`) serves `dist/` and handles `POST /api/consultation`.
+The production server (`server.js`) serves `dist/` with immutable asset caching and handles `POST /api/consultation`.
 
 ---
 
@@ -216,8 +247,7 @@ AVORA/
 │   │   │   ├── Toolkit.tsx
 │   │   │   └── VisualServices.tsx
 │   │   └── ui/                 # Reusable UI widgets & custom cursor
-│   │       ├── CustomCursor.tsx
-│   │       └── SoundToggle.tsx
+│   │   │   └── CustomCursor.tsx
 │   ├── data/                   # Centralized data models & service configs
 │   │   ├── packages.ts
 │   │   ├── playground.ts

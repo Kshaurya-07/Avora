@@ -350,6 +350,10 @@ export const Consultation: React.FC<ConsultationProps> = ({ initialServiceId }) 
         setStepError('Please select at least one preferred logo type.');
         return;
       }
+      if (selectedService === 'branding' && (!brandingState.brandName || brandingState.brandName.trim().length === 0)) {
+        setStepError('Please enter your brand or business name.');
+        return;
+      }
       if (selectedService === 'graphic-design' && graphicState.designItemTypes.length === 0) {
         setStepError('Please select at least one design item.');
         return;

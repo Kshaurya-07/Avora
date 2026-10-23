@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowUpRight,
@@ -48,6 +48,13 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const ProjectPlanner: React.FC<ProjectPlannerProps> = ({ initialService }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [services, setServices] = useState<string[]>(initialService ? [initialService] : []);
+
+  useEffect(() => {
+    if (initialService) {
+      setServices([initialService]);
+      setCurrentStep(1);
+    }
+  }, [initialService]);
   const [budget, setBudget] = useState<string>('');
   const [timeline, setTimeline] = useState<string>('');
   const [description, setDescription] = useState<string>('');

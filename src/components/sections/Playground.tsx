@@ -35,7 +35,12 @@ export const Playground: React.FC = () => {
       mouse.active = true;
     };
 
+    const onMouseLeave = () => {
+      mouse.active = false;
+    };
+
     canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
 
     const render = () => {
       t += 0.015;
@@ -78,6 +83,7 @@ export const Playground: React.FC = () => {
     return () => {
       window.removeEventListener('resize', resize);
       canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
   }, [hasItems]);

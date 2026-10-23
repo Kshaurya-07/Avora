@@ -18,6 +18,7 @@ export const CursorContext = React.createContext<CursorContextType>({
 export const CustomCursor: React.FC = () => {
   const { cursorText, cursorVariant } = React.useContext(CursorContext);
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
+  const [isVisible, setIsVisible] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
@@ -29,10 +30,25 @@ export const CustomCursor: React.FC = () => {
 
     const onMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
+      setIsVisible(true);
+    };
+
+    const onMouseLeave = () => {
+      setIsVisible(false);
+    };
+
+    const onMouseEnter = () => {
+      setIsVisible(true);
     };
 
     window.addEventListener('mousemove', onMouseMove);
-    return () => window.removeEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseenter', onMouseEnter);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mouseenter', onMouseEnter);
+    };
   }, []);
 
   if (isTouch) return null;
@@ -51,6 +67,7 @@ export const CustomCursor: React.FC = () => {
           width: hasText ? 88 : isExpanded ? 40 : 12,
           height: hasText ? 88 : isExpanded ? 40 : 12,
           backgroundColor: '#FAF9F6',
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{
           type: 'spring',

@@ -127,6 +127,15 @@ export const App: React.FC = () => {
   }, [currentPath]);
 
   const handleNavigate = (sectionId: string) => {
+    if (sectionId === 'hero') {
+      if (currentPath !== '/') {
+        navigateToHome();
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+
     if (currentPath !== '/') {
       navigateToHome();
       setTimeout(() => {
@@ -134,7 +143,7 @@ export const App: React.FC = () => {
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 100);
+      }, 150);
       return;
     }
 
@@ -172,6 +181,7 @@ export const App: React.FC = () => {
         {/* Accessible Command Palette (⌘K / Ctrl+K) */}
         <CommandMenu
           isOpen={isCommandOpen}
+          onOpen={() => setIsCommandOpen(true)}
           onClose={() => setIsCommandOpen(false)}
           onNavigate={handleNavigate}
           onNavigateAbout={navigateToAbout}
