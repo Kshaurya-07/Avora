@@ -1,284 +1,160 @@
-# AVORA — Multidisciplinary Designer & Web Developer
+# AVORA
 
-> **"IDEA → DESIGN → EXPERIENCE → DEVELOPMENT"**  
-> **"TURNING IDEAS INTO LIVING DIGITAL EXPERIENCES."**
+A multidisciplinary design and web development studio site, covering brand identity, graphic and editorial design, apparel design, product UI/UX, web design, and web development.
 
-A luxury editorial, production-grade digital studio experience built for **AVORA** by **Kumar Shaurya**. Uniting brand identity architecture, graphic & editorial design, streetwear capsule apparel, product UI/UX design systems, and 120Hz-ready frontend engineering into a single cohesive, high-performance web experience.
+## Table of Contents
 
-[![CI](https://github.com/Kshaurya-07/Avora/actions/workflows/ci.yml/badge.svg)](https://github.com/Kshaurya-07/Avora/actions/workflows/ci.yml)
-[![Live on Render](https://img.shields.io/badge/Render-Deployed-success?logo=render&logoColor=white)](https://avora.onrender.com)
-[![React 18](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Three.js](https://img.shields.io/badge/Three.js-WebGL-black?logo=three.js&logoColor=white)](https://threejs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+- [Overview](#overview)
+- [Services](#services)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
----
+## Overview
 
-## ✦ Brand Universe & Positioning
+AVORA presents the work of Kumar Shaurya, a multidisciplinary designer and web developer. The site is designed as an editorial, visual portfolio and studio experience, with service descriptions, interactive demonstrations, project planning, and a consultation form.
 
-- **Studio**: AVORA
-- **Founder**: Kumar Shaurya ([Email AVORA ↗](mailto:kshaurya0708@gmail.com))
-- **Positioning**: Multidisciplinary Designer & Web Developer
-- **Aesthetic**: Luxury Editorial Design + Designer Portfolio + Futuristic 3D WebGL + Cinematic Storytelling
-- **Theme**: Curated Light Theme (Warm white `#FAF9F6`, bone ivory, muted charcoal `#18181B`, iridescent lavender, azure, and rose accents)
-- **Audio Posture**: 100% Silent by design. Pure visual, typographic, and interactive immersion without intrusive sound effects.
+The original README uses the tagline "Idea to design to experience to development" and describes the studio as turning ideas into digital experiences. The aesthetic described in the original README is a curated light theme with warm white, bone ivory, and muted charcoal tones.
 
----
+## Services
 
-## ✦ 7 Core Creative Disciplines
+AVORA structures its work into seven disciplines, as described in the original README:
 
-AVORA structures its capabilities into 7 clearly defined, interactively demonstrated disciplines:
+| Discipline | Focus |
+| --- | --- |
+| Logo design | Construction grids, monograms, symbol development, wordmarks, and responsive lockups |
+| Branding | Identity architecture, typography pairing, colour palettes, packaging mockups, and brand style manuals |
+| Graphic design | Posters, editorial layouts, campaign visuals, marketing collateral, and social design systems |
+| Apparel design | Streetwear capsule direction, tee and hoodie silhouettes, print placements, and manufacturer tech packs |
+| UI/UX design | Digital product design, multi-device prototypes, component tokens, and SaaS workflows |
+| Web design | Editorial websites, asymmetric grids, responsive layouts, and scroll-based presentation |
+| Web development | Production React and Next.js code, Three.js WebGL work, Tailwind styling, and smooth scrolling |
 
-| # | Discipline | Capability & Demonstration | Primary Toolkit |
-|:---:|:---|:---|:---|
-| **01** | **LOGO DESIGN** | Mathematical golden ratio construction grids, monograms, symbol development, wordmarks, B&W contrast inversion, and multi-scale responsive lockup systems. | Adobe Illustrator, Figma, Canva, Math Grids |
-| **02** | **BRANDING** | Comprehensive identity architecture, typography pairing, curated Pantone color palettes, tactile packaging mockups, and complete brand style manuals. | Figma, Adobe Illustrator, Canva, Photoshop |
-| **03** | **GRAPHIC DESIGN** | Experimental silkscreen posters, high-fashion editorial layouts, campaign key visuals, marketing collateral, and agile social design systems. | Canva (Featured Agile Socials), Photoshop, Illustrator |
-| **04** | **APPAREL DESIGN** | Streetwear capsule direction, heavyweight boxy tee & hoodie silhouettes, technical print placements (front, back, sleeve, puff ink), and manufacturer tech packs. | Adobe Illustrator, Photoshop, Physical Tech Packs |
-| **05** | **UI/UX DESIGN** | High-end digital product design, multi-device viewport prototypes (iPhone, iPad, Studio Display), component design tokens, and frictionless SaaS workflows. | Figma, FigJam, Tokens Studio |
-| **06** | **WEB DESIGN** | Awwwards-caliber editorial websites, asymmetric grids, fluid breakpoint responsiveness (Desktop, Tablet, Mobile), and scroll choreography. | Figma, Adobe Creative Suite, Blender |
-| **07** | **WEB DEVELOPMENT** | Translating design vision into production React/Next.js code, Three.js WebGL shaders, Tailwind utility layers, and 120Hz-ready fluid momentum scrolling. | React 18, TypeScript, Three.js, Vite, Tailwind |
+Tools mentioned in the original README include Figma, Adobe Illustrator, Photoshop, Canva, Blender, and Tokens Studio, with the specific tool varying by discipline.
 
----
+## Features
 
-## ✦ Architecture & Systems
+- **Consultation pipeline:** A consultation form that posts to `POST /api/consultation`, with service-specific questions, meeting preferences, and reference links.
+- **Form validation:** Client and server validation for name, email, and phone, with inline guidance and session state preservation during multi-step forms, as described in the original README.
+- **Spam protection:** A honeypot field and IP rate limiting, as described in the original README.
+- **Interactive about page:** An 8-step creative process and service deep-dives, as described in the original README.
+- **Interactive toolkit:** A selector describing what each tool is used for, by service.
+- **3D presentation:** A Three.js crystal visual that pauses when scrolled off-screen, as described in the original README.
+- **Control panel:** A panel with service shortcuts and consultation entry points, with keyboard accessibility, as described in the original README.
+- **Silent by design:** No intrusive sound effects, as described in the original README.
 
-### 1. Real Consultation & Project Onboarding Email Pipeline
-- **Backend Route**: `POST /api/consultation`
-- **Delivery Recipient**: Strictly dispatched to `kshaurya0708@gmail.com`.
-- **Subject Format**: `New AVORA Consultation — [SERVICE NAME]` (e.g. *New AVORA Consultation — Logo Design*).
-- **Reply-To Configuration**: Automatically set to the **customer's submitted email address** (`reply_to: email`), ensuring when AVORA clicks "Reply", the email client responds directly to the customer.
-- **Payload Contents**: Full customer contact coordinates (Full Name, Validated Email, Phone with country code, Company/Brand), complete service-specific answers, meeting preferences, preferred date/time, timezone, and reference links.
-- **Spam Protection & Rate Limiting**: Built-in honeypot bot trap (`_hp`) and IP rate limiting (maximum 5 requests per IP per hour) with automatic memory pruning.
-- **Server Infrastructure**:
-  - **Development**: Synchronously handled in Vite dev middleware (`vite.config.ts`).
-  - **Production**: Native Node.js HTTP server (`server.js`) with zero extra runtime dependencies, serving `dist/` and providing SPA fallback routing.
+The original README also includes a detailed list of recent bug fixes. Those fixes are summarised here as stability work on the command palette, project planner, custom cursor, navigation, server handling, rate limiting, and email rendering, rather than reproduced in full, because a README is not the right place for a detailed changelog.
 
-### 2. Live Dynamic Form Validation (Red → Green)
-- **Consultation Forms (7 Tailored Services) & Project Planner**:
-  - **Full Name**: Required (minimum 2 characters).
-  - **Email Address**: Required (`type="email"`, strict regex client & server validation).
-  - **Phone Number**: Required (searchable 19-country code selector dropdown e.g. `+91`, `+1`, `+44`, `+971`, etc., and minimum 6-digit validation).
-  - **Company / Brand**: Optional.
-- **Dynamic Visual Feedback**:
-  - As soon as a user enters valid input, fields dynamically transition into a verified **green state** (`border-emerald-400 bg-emerald-50/20`) with a **`✓ Valid`** checkmark badge.
-  - Invalid inputs display clear inline guidance errors (`border-rose-300`).
-- **Session State Preservation**: Contact coordinates and step answers are preserved during the session so navigating between steps or reviewing inputs never wipes customer data.
-
-### 3. Public Email Address Concealment
-- Raw visible `kshaurya0708@gmail.com` text has been concealed across the entire public interface.
-- Replaced with elegant, clickable **`Email AVORA ↗`** CTAs across the Navbar, Feature Tray, Command Menu, About Page, Footer, and Final CTA while maintaining direct `mailto:kshaurya0708@gmail.com` links.
-
-### 4. 120Hz-Ready Real 3D WebGL Crystal (`GlassCrystal.tsx`)
-- High-performance Three.js faceted crystal with dynamic pointer tracking using `THREE.MathUtils.lerp` inertia (0.05 damping) on rotation, inner polyhedron core, and iridescent lighting.
-- Pointer tracking runs directly inside the Three.js render loop without triggering React component re-renders.
-- Automatically pauses the 3D render loop via `IntersectionObserver` when scrolled off-screen, saving GPU battery.
-
-### 5. Interactive About Page (`/about` — `AboutPage.tsx`)
-- **Founder Section**: Real, unembellished profile of **Kumar Shaurya**, Multidisciplinary Designer & Web Developer (zero fake awards, zero fabricated clients).
-- **Interactive 8-Step Creative Process**: Stepper bar allows clicking steps `01 DISCOVER` to `08 DELIVER` to transform a central studio canvas with dynamic visual diagrams and deliverables.
-- **Interactive 7 Service Processes**: Every service deep dive includes an expandable 4-stage flowchart (`01 DISCOVER`, `02 EXPLORE`, `03 REFINE`, `04 FINALIZE`) revealing step-by-step methodologies and visual blueprint specifications.
-- **Transparent Disclosures**: Clear explanations on using templates/scaffolding for rapid prototyping and using AI as an accelerator for ideation without replacing human artistry.
-
-### 6. Interactive Toolkit (`Toolkit.tsx`)
-- **Canva Prominence**: Dedicated spotlight highlighting Canva as the studio's primary agile engine for client-editable social systems, decks, and marketing visuals.
-- **Live Tool Inspector**: Interactive selector matrix detailing what AVORA uses each tool for, relevant services, standard outputs, and studio craftsmanship rationale.
-
-### 7. Creative Control Panel Tray (`FeatureTray.tsx`)
-- Clicking `[ PANEL ]` beside the AVORA logo opens an expandable control panel with direct service shortcuts, consultation launchpads, and email triggers. Full keyboard accessibility (closes on `ESC`).
-
----
-
-## ✦ Recent Bug Fixes & Stability Polish
-
-The codebase has undergone a comprehensive audit resolving all runtime, UX, and architectural edge cases:
-
-1. **Command Palette (`CommandMenu.tsx`)**:
-   - Resolved keyboard shortcut issue: pressing `⌘K` or `Ctrl+K` when closed now reliably opens the palette via `onOpen()` callback. Pressing it while open or pressing `ESC` closes it.
-2. **Project Planner Synchronization (`ProjectPlanner.tsx`)**:
-   - Added prop synchronization `useEffect`: clicking *"Request a Quote"* on any package in `Packages.tsx` dynamically populates the planner's selected service and resets to step 1.
-3. **Smooth Viewport Cursor Boundary Tracking (`CustomCursor.tsx`)**:
-   - Added window `mouseenter`/`mouseleave` event listeners to fade out custom cursor when exiting browser viewport, preventing frozen cursor artifacts.
-4. **Navigation & Top-Scroll Controller (`App.tsx`)**:
-   - Navigating to `'hero'` cleanly executes `window.scrollTo({ top: 0, behavior: 'smooth' })`.
-   - Inter-page navigation from `/about` back to homepage anchors stabilizes DOM mounting with an optimized 150ms timeout.
-5. **Server Security & IP Extraction (`server.js`)**:
-   - Safe `Host` header fallback (`req.headers.host || 'localhost'`).
-   - Reverse-proxy client IP extraction handling comma-separated `x-forwarded-for` headers for Render and Cloudflare deployments.
-   - Streaming request size limit (1MB ceiling) with proper `413 Payload Too Large` responses protecting against hung sockets.
-   - Normalization of route paths ignoring trailing slashes (`/api/consultation/`).
-6. **Rate Limiting Garbage Collection (`server/emailService.js`)**:
-   - Automatic pruning mechanism cleans up expired timestamps when `rateLimitMap.size > 1000`, preventing in-memory leaks in long-running processes.
-7. **HTML Email Link Rendering (`server/emailService.js`)**:
-   - Validates references input: only wraps text in `<a href="..." target="_blank">` if it starts with `http://` or `https://`. Plain text like `"None provided"` renders safely as text without broken hyperlinks.
-8. **Branding Step 1 Validation (`Consultation.tsx`)**:
-   - Added strict validation for `brandingState.brandName` in Step 1 of the Branding consultation form.
-9. **Interactive Discipline Links (`Footer.tsx`)**:
-   - Converted static discipline items into interactive buttons navigating to the Services section.
-10. **Generative Canvas Mouse Reset (`Playground.tsx`)**:
-    - Added `mouseleave` listener to the generative canvas, resetting `mouse.active = false` so wave perturbations settle smoothly when cursor leaves.
-
----
-
-## ✦ Tech Stack
+## Tech Stack
 
 | Category | Technology |
-|:---|:---|
-| **Frontend Framework** | React 18, TypeScript, Vite 5 |
-| **3D & WebGL Engine** | Three.js, `@react-three/fiber`, `@react-three/drei` |
-| **Styling & Design Tokens** | Tailwind CSS, PostCSS, Autoprefixer |
-| **Motion Physics & Pacing** | Framer Motion, Lenis (Smooth Momentum Scroll), Canvas Confetti |
-| **Backend & Delivery** | Native Node.js HTTP Server (`server.js`), Resend / SMTP API dispatcher |
-| **Typography** | Playfair Display (Editorial Serif), Plus Jakarta Sans, JetBrains Mono |
-| **Icons** | Lucide React |
-| **Hosting & CI/CD** | Render Web Service (`render.yaml`), GitHub Actions CI (`ci.yml`) |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite 5 |
+| 3D and WebGL | Three.js, @react-three/fiber, @react-three/drei |
+| Styling | Tailwind CSS, PostCSS, Autoprefixer |
+| Motion | Framer Motion, Lenis, Canvas Confetti, as described in the original README |
+| Backend and delivery | Native Node.js HTTP server (`server.js`), Resend / SMTP dispatch, as described in the original README |
+| Typography | Playfair Display, Plus Jakarta Sans, JetBrains Mono |
+| Icons | Lucide React |
+| Hosting and CI | Render Web Service (`render.yaml`), GitHub Actions CI (`ci.yml`), as described in the original README |
 
----
+## Project Structure
 
-## ✦ Getting Started Locally
+The structure below is a condensed summary of the layout described in the original README.
+
+```text
+AVORA/
+├── .github/workflows/ci.yml
+├── server/emailService.js
+├── src/
+│   ├── components/
+│   │   ├── canvas/
+│   │   ├── mockups/
+│   │   ├── navigation/
+│   │   ├── pages/
+│   │   ├── sections/
+│   │   └── ui/
+│   ├── data/
+│   ├── styles/
+│   ├── types/
+│   ├── App.tsx
+│   └── main.tsx
+├── server.js
+├── render.yaml
+├── tailwind.config.js
+├── tsconfig.json
+└── vite.config.ts
+```
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (v18.0.0 or higher)
-- npm (v9.0.0 or higher)
 
-### 1. Clone the Repository
+- Node.js 18 or higher
+- npm 9 or higher
+
+### Installation
+
 ```bash
 git clone https://github.com/Kshaurya-07/Avora.git
 cd Avora
-```
-
-### 2. Install Dependencies
-```bash
 npm install
-```
-
-### 3. Run Development Server
-```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.  
-The Vite dev server includes synchronous middleware for `POST /api/consultation`.
 
-### 4. Build & Run Production Server
+Follow the terminal output for the local development address. The Vite development server includes middleware for `POST /api/consultation`, as described in the original README.
+
+### Production build and server
+
 ```bash
 npm run build
 npm start
 ```
-The production server (`server.js`) serves `dist/` with immutable asset caching and handles `POST /api/consultation`.
 
----
+The production server serves the built site and handles `POST /api/consultation`, as described in the original README.
 
-## ✦ Environment Variables
+## Environment Variables
 
 Copy `.env.example` to `.env`:
+
 ```bash
 cp .env.example .env
 ```
 
-| Variable | Description | Default / Example |
-|:---|:---|:---|
-| `CONSULTATION_RECEIVER` | Destination email for all consultation submissions | `kshaurya0708@gmail.com` |
-| `RESEND_API_KEY` | Optional Resend API key for live transactional email delivery | `re_123456789` |
-| `EMAIL_FROM` | Sender address for outgoing emails | `onboarding@resend.dev` |
-| `PORT` | HTTP port for the production server | `3000` |
+| Variable | Description |
+| --- | --- |
+| `CONSULTATION_RECEIVER` | Destination email for consultation submissions |
+| `RESEND_API_KEY` | Optional Resend API key for live email delivery |
+| `EMAIL_FROM` | Sender address for outgoing emails |
+| `PORT` | HTTP port for the production server |
 
-*Note: In development without an API key, the server safely logs the complete formatted consultation inquiry to the terminal with `Reply-To: customer.email`.*
+In development without an API key, the server logs the formatted consultation inquiry to the terminal, as described in the original README. Do not commit real API keys or personal email credentials.
 
----
+## Deployment
 
-## ✦ Deployment on Render
+The project includes a Render Blueprint (`render.yaml`) for deployment as a Node web service:
 
-This project includes a pre-configured [`render.yaml`](./render.yaml) for deployment as a **Node Web Service**:
+1. Sign in to Render with your GitHub account.
+2. Create a new Blueprint and select this repository.
+3. Render configures the Node environment, build command, and start command from `render.yaml`.
+4. Add a `RESEND_API_KEY` in the Render dashboard if live email dispatch through Resend is required.
 
-1. Sign in to **[Render](https://render.com)** with your GitHub account.
-2. Click **New +** → **Blueprint**.
-3. Select your repository: **`Kshaurya-07/Avora`**.
-4. Render automatically configures:
-   - **Environment**: Node
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-   - **Environment Variables**: `CONSULTATION_RECEIVER=kshaurya0708@gmail.com`, `EMAIL_FROM=onboarding@resend.dev`
-5. Add your `RESEND_API_KEY` in the Render dashboard if you wish to dispatch live emails through Resend.
-6. Click **Apply**.
+The original README lists the build command as `npm install && npm run build` and the start command as `npm start`.
 
----
+## Contributing
 
-## ✦ Project Architecture
+Issues and pull requests are welcome. Please keep design and copy changes consistent with the studio's editorial style, and do not add fabricated clients, awards, or testimonials.
 
-```text
-AVORA/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # GitHub Actions CI workflow (Build, Typecheck, API smoke test)
-├── server/
-│   └── emailService.js         # Server-side validation, rate limiting, anti-spam & email formatting
-├── src/
-│   ├── components/
-│   │   ├── canvas/             # Three.js WebGL crystal & hero scene
-│   │   │   ├── GlassCrystal.tsx
-│   │   │   └── HeroScene.tsx
-│   │   ├── mockups/            # Interactive discipline capability demonstrations
-│   │   │   ├── ApparelMockup.tsx
-│   │   │   ├── BrandingMockup.tsx
-│   │   │   ├── GraphicDesignMockup.tsx
-│   │   │   ├── LogoDesignMockup.tsx
-│   │   │   ├── UIUXMockup.tsx
-│   │   │   ├── WebDesignMockup.tsx
-│   │   │   └── WebDevMockup.tsx
-│   │   ├── navigation/         # Header navigation, command palette & control tray
-│   │   │   ├── CommandMenu.tsx
-│   │   │   ├── FeatureTray.tsx
-│   │   │   └── Navbar.tsx
-│   │   ├── pages/              # Dedicated full page views
-│   │   │   └── AboutPage.tsx
-│   │   ├── sections/           # Modular homepage sections
-│   │   │   ├── About.tsx
-│   │   │   ├── Consultation.tsx
-│   │   │   ├── DesignedThenBuilt.tsx
-│   │   │   ├── FinalCTA.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   ├── Packages.tsx
-│   │   │   ├── Playground.tsx
-│   │   │   ├── ProjectPlanner.tsx
-│   │   │   ├── Testimonials.tsx
-│   │   │   ├── TickerIntro.tsx
-│   │   │   ├── Toolkit.tsx
-│   │   │   └── VisualServices.tsx
-│   │   └── ui/                 # Reusable UI widgets & custom cursor
-│   │   │   └── CustomCursor.tsx
-│   ├── data/                   # Centralized data models & service configs
-│   │   ├── packages.ts
-│   │   ├── playground.ts
-│   │   ├── projects.ts
-│   │   └── services.ts
-│   ├── styles/                 # Tailwind utility styles & glassmorphic classes
-│   │   └── index.css
-│   ├── types/                  # Strict TypeScript interface declarations
-│   │   └── index.ts
-│   ├── App.tsx                 # Root coordinator with SPA history router & Lenis
-│   └── main.tsx                # DOM root entry point
-├── .env.example                # Documented environment variables template
-├── package.json                # Scripts & project dependencies
-├── render.yaml                 # Render Blueprint for zero-config deployment
-├── server.js                   # Production native Node.js HTTP server (dist/ + /api/consultation)
-├── tailwind.config.js          # Custom luxury palette & typography tokens
-├── tsconfig.json               # Strict TypeScript configuration
-└── vite.config.ts              # Vite dev server middleware & production chunking
-```
+## License
 
----
+© 2026 AVORA Studio — Kumar Shaurya. All rights reserved.
 
-## ✦ Contact & Inquiries
+## Author
 
-- **Founder**: Kumar Shaurya
-- **Email**: [Email AVORA ↗](mailto:kshaurya0708@gmail.com)
-- **GitHub**: [@Kshaurya-07](https://github.com/Kshaurya-07)
-- **Repository**: [https://github.com/Kshaurya-07/Avora](https://github.com/Kshaurya-07/Avora)
-
----
-
-## ✦ License
-
-© 2026 AVORA Studio — Kumar Shaurya. All Rights Reserved.
+Kumar Shaurya — https://github.com/Kshaurya-07
