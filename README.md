@@ -2,6 +2,8 @@
 
 A multidisciplinary design and web development studio site, covering brand identity, graphic and editorial design, apparel design, product UI/UX, web design, and web development.
 
+> Idea to design to experience to development — turning ideas into digital experiences.
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -18,13 +20,13 @@ A multidisciplinary design and web development studio site, covering brand ident
 
 ## Overview
 
-AVORA presents the work of Kumar Shaurya, a multidisciplinary designer and web developer. The site is designed as an editorial, visual portfolio and studio experience, with service descriptions, interactive demonstrations, project planning, and a consultation form.
+AVORA presents the work of Kumar Shaurya, a multidisciplinary designer and web developer. The site is an editorial, visual portfolio and studio experience, with service descriptions, interactive demonstrations, project planning, and a consultation form.
 
-The original README uses the tagline "Idea to design to experience to development" and describes the studio as turning ideas into digital experiences. The aesthetic described in the original README is a curated light theme with warm white, bone ivory, and muted charcoal tones.
+The design uses a curated light theme in warm white, bone ivory, and muted charcoal, with iridescent lavender, azure, and rose accents. It is silent by design, with no intrusive sound effects.
 
 ## Services
 
-AVORA structures its work into seven disciplines, as described in the original README:
+AVORA structures its work into seven disciplines:
 
 | Discipline | Focus |
 | --- | --- |
@@ -36,20 +38,20 @@ AVORA structures its work into seven disciplines, as described in the original R
 | Web design | Editorial websites, asymmetric grids, responsive layouts, and scroll-based presentation |
 | Web development | Production React and Next.js code, Three.js WebGL work, Tailwind styling, and smooth scrolling |
 
-Tools mentioned in the original README include Figma, Adobe Illustrator, Photoshop, Canva, Blender, and Tokens Studio, with the specific tool varying by discipline.
+The toolkit includes Figma, Adobe Illustrator, Photoshop, Canva, Blender, and Tokens Studio, with the specific tools varying by discipline.
 
 ## Features
 
 - **Consultation pipeline:** A consultation form that posts to `POST /api/consultation`, with service-specific questions, meeting preferences, and reference links.
-- **Form validation:** Client and server validation for name, email, and phone, with inline guidance and session state preservation during multi-step forms, as described in the original README.
-- **Spam protection:** A honeypot field and IP rate limiting, as described in the original README.
-- **Interactive about page:** An 8-step creative process and service deep-dives, as described in the original README.
+- **Form validation:** Client and server validation for name, email, and phone, with inline guidance, a verified state for valid input, and session state preservation during multi-step forms.
+- **Spam protection:** A honeypot field and IP rate limiting, limited to 5 requests per IP per hour.
+- **Interactive about page:** An 8-step creative process, from Discover to Deliver, and service deep-dives with a four-stage flow: Discover, Explore, Refine, Finalize.
 - **Interactive toolkit:** A selector describing what each tool is used for, by service.
-- **3D presentation:** A Three.js crystal visual that pauses when scrolled off-screen, as described in the original README.
-- **Control panel:** A panel with service shortcuts and consultation entry points, with keyboard accessibility, as described in the original README.
-- **Silent by design:** No intrusive sound effects, as described in the original README.
+- **3D presentation:** A Three.js crystal visual with pointer tracking that pauses when scrolled off-screen.
+- **Control panel:** A panel with service shortcuts and consultation entry points, with keyboard accessibility, including closing with `Esc`.
+- **Silent by design:** No intrusive sound effects.
 
-The original README also includes a detailed list of recent bug fixes. Those fixes are summarised here as stability work on the command palette, project planner, custom cursor, navigation, server handling, rate limiting, and email rendering, rather than reproduced in full, because a README is not the right place for a detailed changelog.
+Stability work in this codebase covers the command palette, project planner, custom cursor, navigation, server handling, rate limiting, and email rendering.
 
 ## Tech Stack
 
@@ -58,15 +60,13 @@ The original README also includes a detailed list of recent bug fixes. Those fix
 | Frontend | React 18, TypeScript, Vite 5 |
 | 3D and WebGL | Three.js, @react-three/fiber, @react-three/drei |
 | Styling | Tailwind CSS, PostCSS, Autoprefixer |
-| Motion | Framer Motion, Lenis, Canvas Confetti, as described in the original README |
-| Backend and delivery | Native Node.js HTTP server (`server.js`), Resend / SMTP dispatch, as described in the original README |
+| Motion | Framer Motion, Lenis, Canvas Confetti |
+| Backend and delivery | Native Node.js HTTP server (`server.js`), Resend / SMTP dispatch |
 | Typography | Playfair Display, Plus Jakarta Sans, JetBrains Mono |
 | Icons | Lucide React |
-| Hosting and CI | Render Web Service (`render.yaml`), GitHub Actions CI (`ci.yml`), as described in the original README |
+| Hosting and CI | Render Web Service (`render.yaml`), GitHub Actions CI (`ci.yml`) |
 
 ## Project Structure
-
-The structure below is a condensed summary of the layout described in the original README.
 
 ```text
 AVORA/
@@ -108,7 +108,7 @@ npm install
 npm run dev
 ```
 
-Follow the terminal output for the local development address. The Vite development server includes middleware for `POST /api/consultation`, as described in the original README.
+Follow the terminal output for the local development address. The Vite development server includes middleware for `POST /api/consultation`.
 
 ### Production build and server
 
@@ -117,7 +117,7 @@ npm run build
 npm start
 ```
 
-The production server serves the built site and handles `POST /api/consultation`, as described in the original README.
+The production server serves the built site and handles `POST /api/consultation`.
 
 ## Environment Variables
 
@@ -134,7 +134,7 @@ cp .env.example .env
 | `EMAIL_FROM` | Sender address for outgoing emails |
 | `PORT` | HTTP port for the production server |
 
-In development without an API key, the server logs the formatted consultation inquiry to the terminal, as described in the original README. Do not commit real API keys or personal email credentials.
+In development without an API key, the server logs the formatted consultation inquiry to the terminal. Do not commit real API keys or personal email credentials.
 
 ## Deployment
 
@@ -145,7 +145,9 @@ The project includes a Render Blueprint (`render.yaml`) for deployment as a Node
 3. Render configures the Node environment, build command, and start command from `render.yaml`.
 4. Add a `RESEND_API_KEY` in the Render dashboard if live email dispatch through Resend is required.
 
-The original README lists the build command as `npm install && npm run build` and the start command as `npm start`.
+Build command: `npm install && npm run build`
+
+Start command: `npm start`
 
 ## Contributing
 
