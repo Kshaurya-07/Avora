@@ -287,6 +287,19 @@ Reply-To: ${email}
     }
   }
 
+  // No email API key configured. Simulated (log-only) delivery is for
+  // development only: in any other environment, returning success here
+  // would show the visitor a "success" screen while the lead is never
+  // emailed and only lands in the server log.
+  if (process.env.NODE_ENV !== 'development') {
+    console.error('[AVORA Email Service Error]: RESEND_API_KEY is not configured; consultation cannot be delivered.');
+    return {
+      success: false,
+      status: 503,
+      error: 'Consultation delivery is not configured right now. Please email us directly instead.',
+    };
+  }
+
   // Fallback mode for development / testing without active API keys:
   // Securely log to server console and return success
   console.log('\n======================================================');

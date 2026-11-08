@@ -32,6 +32,7 @@ export default {
         'marquee': 'marquee 35s linear infinite',
         'float': 'float 6s ease-in-out infinite',
         'pulse-subtle': 'pulseSubtle 4s ease-in-out infinite',
+        'spin-slow': 'spin 24s linear infinite',
       },
       keyframes: {
         marquee: {

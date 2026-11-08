@@ -130,11 +130,11 @@ cp .env.example .env
 | Variable | Description |
 | --- | --- |
 | `CONSULTATION_RECEIVER` | Destination email for consultation submissions |
-| `RESEND_API_KEY` | Optional Resend API key for live email delivery |
+| `RESEND_API_KEY` | Required in production — Resend API key for live email delivery (without it, consultation submissions are rejected in production) |
 | `EMAIL_FROM` | Sender address for outgoing emails |
 | `PORT` | HTTP port for the production server |
 
-In development without an API key, the server logs the formatted consultation inquiry to the terminal. Do not commit real API keys or personal email credentials.
+In development without an API key, the server logs the formatted consultation inquiry to the terminal. In production, `RESEND_API_KEY` is required — submissions are rejected with an error instead of a false success when it is not set. Do not commit real API keys or personal email credentials.
 
 ## Deployment
 
@@ -143,7 +143,7 @@ The project includes a Render Blueprint (`render.yaml`) for deployment as a Node
 1. Sign in to Render with your GitHub account.
 2. Create a new Blueprint and select this repository.
 3. Render configures the Node environment, build command, and start command from `render.yaml`.
-4. Add a `RESEND_API_KEY` in the Render dashboard if live email dispatch through Resend is required.
+4. Add a `RESEND_API_KEY` in the Render dashboard — it is required in production for consultation emails to be delivered.
 
 Build command: `npm install && npm run build`
 
